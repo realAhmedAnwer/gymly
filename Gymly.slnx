@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="Gymly.Application/Gymly.Application.csproj" />
+  <Project Path="Gymly.Domain/Gymly.Domain.csproj" />
+  <Project Path="Gymly.Infrastructure/Gymly.Infrastructure.csproj" />
+  <Project Path="Gymly.Web/Gymly.Web.csproj" />
+</Solution>
