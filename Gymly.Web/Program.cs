@@ -1,7 +1,23 @@
+using Gymly.Application.Interfaces;
+using Gymly.Application.Interfaces.Repositories;
+using Gymly.Infrastructure;
+using Gymly.Infrastructure.Repositories;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+builder.Services.AddDbContext<GymlyDbContext>(options =>
+    options.UseSqlServer(connectionString, b => b.MigrationsAssembly("Gymly.Infrastructure")));
+
+builder.Services.AddScoped<IApplicationDbContext>(provider =>
+    provider.GetRequiredService<GymlyDbContext>());
+
+builder.Services.AddScoped<IMemberRepository, MemberRepository>();
+builder.Services.AddScoped<ITrainerRepository, TrainerRepository>();
 
 var app = builder.Build();
 
