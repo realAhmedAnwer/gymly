@@ -1,4 +1,8 @@
 <Solution>
+  <Folder Name="/Solution Items/" />
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
   <Project Path="Gymly.Application/Gymly.Application.csproj" />
   <Project Path="Gymly.Domain/Gymly.Domain.csproj" />
   <Project Path="Gymly.Infrastructure/Gymly.Infrastructure.csproj" />

@@ -1,0 +1,56 @@
+﻿@model Gymly.Web.Models.Sessions.CreateSessionViewModel
+
+@{
+    ViewData["Title"] = "Schedule New Gym Session";
+}
+
+<h3>Schedule Gym Session</h3>
+
+<form asp-controller="Sessions" asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+
+    <div>
+        <label asp-for="ClassId">Gym Class:</label>
+        <select asp-for="ClassId" asp-items="Model.AvailableClasses">
+            <option value="">-- Select Class --</option>
+        </select>
+        <span asp-validation-for="ClassId"></span>
+    </div>
+
+    <br />
+
+    <div>
+        <label asp-for="TrainerId">Trainer Assignment:</label>
+        <select asp-for="TrainerId" asp-items="Model.AvailableTrainers">
+            <option value="">-- Select Trainer --</option>
+        </select>
+        <span asp-validation-for="TrainerId"></span>
+    </div>
+
+    <br />
+
+    <div>
+        <label asp-for="StartTime">Session Start Time:</label>
+        <input asp-for="StartTime" type="datetime-local" />
+        <span asp-validation-for="StartTime"></span>
+    </div>
+
+    <br />
+
+    <div>
+        <label asp-for="EndTime">Session End Time:</label>
+        <input asp-for="EndTime" type="datetime-local" />
+        <span asp-validation-for="EndTime"></span>
+    </div>
+
+    <br />
+
+    <div>
+        <button type="submit">Save and Publish Session</button>
+        <a asp-controller="Sessions" asp-action="Index">Cancel</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

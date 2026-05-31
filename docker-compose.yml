@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  gymly-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: gymly-sql-db
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=YourSecurePassword123!
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql-data:/var/opt/mssql
+    networks:
+      - gymly-network
+
+  gymly.web:
+    image: gymly-web-app
+    container_name: gymly-mvc-web
+    build:
+      context: .
+      dockerfile: Gymly.Web/Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Server=gymly-db;Database=GymlyDb;User Id=sa;Password=YourSecurePassword123!;TrustServerCertificate=True;MultipleActiveResultSets=true
+    depends_on:
+      - gymly-db
+    networks:
+      - gymly-network
+
+volumes:
+  mssql-data:
+
+networks:
+  gymly-network:
+    driver: bridge

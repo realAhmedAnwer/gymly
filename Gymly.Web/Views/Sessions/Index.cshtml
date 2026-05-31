@@ -1,0 +1,44 @@
+﻿@model Gymly.Web.Models.Sessions.SessionsDashboardViewModel
+
+@{
+    ViewData["Title"] = "Sessions Dashboard";
+}
+
+<h2>Active Scheduled Sessions (@Model.TotalActiveSessions)</h2>
+
+<p>
+    <a asp-action="Create">Schedule New Session</a>
+</p>
+
+<table border="1" cellpadding="5">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Class Name</th>
+            <th>Trainer Name</th>
+            <th>Starts At</th>
+            <th>Ends At</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Sessions.Any())
+        {
+            <tr>
+                <td colspan="5">No sessions scheduled for today.</td>
+            </tr>
+        }
+        else
+        {
+            foreach (var session in Model.Sessions)
+            {
+                <tr>
+                    <td>@session.Id</td>
+                    <td>@session.ClassName</td>
+                    <td>@session.TrainerName</td>
+                    <td>@session.StartTime</td>
+                    <td>@session.EndTime</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
