@@ -1,0 +1,52 @@
+﻿@model Gymly.Web.Models.Trainers.TrainersIndexViewModel
+
+@{
+    ViewData["Title"] = "Trainer Management";
+}
+
+<h2>Active Onboarded Trainers (@Model.TotalTrainers)</h2>
+
+<p>
+    <a asp-action="Create">Onboard New Trainer</a>
+</p>
+
+<table border="1" cellpadding="5">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Specialization</th>
+            <th>Hire Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Trainers.Any())
+        {
+            <tr>
+                <td colspan="7">No active trainers registered in the system.</td>
+            </tr>
+        }
+        else
+        {
+            foreach (var trainer in Model.Trainers)
+            {
+                <tr>
+                    <td>@trainer.Id</td>
+                    <td>@trainer.Name</td>
+                    <td>@trainer.Email</td>
+                    <td>@trainer.Phone</td>
+                    <td>@trainer.Specialization</td>
+                    <td>@trainer.HireDate.ToString("yyyy-MM-dd")</td>
+                    <td>
+                        <form asp-action="Delete" asp-route-id="@trainer.Id" method="post" onsubmit="return confirm('Are you sure you want to remove this trainer?');" style="display:inline;">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

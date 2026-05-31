@@ -1,0 +1,44 @@
+﻿@model Gymly.Web.Models.Trainers.CreateTrainerViewModel
+
+@{
+    ViewData["Title"] = "Onboard Trainer";
+}
+
+<h2>Onboard New Trainer Staff</h2>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="ModelOnly" style="color:red;"></div>
+
+    <p>
+        <label asp-for="Name">Full Name:</label><br />
+        <input asp-for="Name" />
+        <span asp-validation-for="Name" style="color:red;"></span>
+    </p>
+
+    <p>
+        <label asp-for="Email">Email Address:</label><br />
+        <input asp-for="Email" type="email" />
+        <span asp-validation-for="Email" style="color:red;"></span>
+    </p>
+
+    <p>
+        <label asp-for="Phone">Phone Number:</label><br />
+        <input asp-for="Phone" />
+        <span asp-validation-for="Phone" style="color:red;"></span>
+    </p>
+
+    <p>
+        <label asp-for="Specialization">Area of Expertise / Specialization:</label><br />
+        <input asp-for="Specialization" />
+        <span asp-validation-for="Specialization" style="color:red;"></span>
+    </p>
+
+    <p>
+        <button type="submit">Register Trainer</button>
+        <a asp-action="Index">Cancel</a>
+    </p>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
