@@ -1,0 +1,44 @@
+﻿@model Gymly.Web.Models.Classes.ClassesIndexViewModel
+
+@{
+    ViewData["Title"] = "Class Management";
+}
+
+<h2>Available Fitness Classes (@Model.TotalClasses)</h2>
+
+<p>
+    <a asp-action="Create">Create New Class Type</a>
+</p>
+
+<table border="1" cellpadding="5">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Class Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!Model.Classes.Any())
+        {
+            <tr>
+                <td colspan="3">No fitness classes registered yet.</td>
+            </tr>
+        }
+        else
+        {
+            foreach (var item in Model.Classes)
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td><strong>@item.Name</strong></td>
+                    <td>
+                        <form asp-action="Delete" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Are you sure you want to remove this class type?');" style="display:inline;">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
