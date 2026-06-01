@@ -6,28 +6,42 @@ namespace Gymly.Infrastructure.Repositories;
 
 public class MemberRepository(GymlyDbContext context) : IMemberRepository
 {
-    public async Task<Member?> GetByIdAsync(int id)
+    public async Task<Member?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        return await context.Members.FindAsync(id);
+        return await context.Members
+            .FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
     }
 
-    public async Task<Member?> GetByQrTokenAsync(Guid token)
+    public async Task<Member?> GetByQrTokenAsync(Guid token, CancellationToken cancellationToken = default)
     {
-        return await context.Members.FirstOrDefaultAsync(m => m.AttendanceCardToken == token);
+        return await context.Members
+            .AsNoTracking()
+            .FirstOrDefaultAsync(m => m.AttendanceCardToken == token, cancellationToken);
     }
 
-    public async Task<IEnumerable<Member>> GetAllActiveMembersAsync()
+    public async Task<IEnumerable<Member>> GetAllActiveMembersAsync(CancellationToken cancellationToken = default)
     {
-        return await context.Members.ToListAsync();
+        return await context.Members
+            .AsNoTracking()
+            .Where(m => m.IsActive)
+            .ToListAsync(cancellationToken);
     }
 
-    public async Task AddAsync(Member member)
+    public async Task AddAsync(Member member, CancellationToken cancellationToken = default)
     {
-        await context.Members.AddAsync(member);
+        await context.Members
+            .AddAsync(member, cancellationToken);
     }
 
     public void Update(Member member)
     {
-        context.Members.Update(member);
+        context.Members
+            .Update(member);
+    }
+
+    public void Delete(Member member)
+    {
+        context.Members
+            .Remove(member);
     }
 }
