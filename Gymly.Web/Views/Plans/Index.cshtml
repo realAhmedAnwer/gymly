@@ -1,0 +1,94 @@
+@model Gymly.Web.Models.Plans.PlansIndexViewModel
+
+@{
+    ViewData["Title"] = "Plan Management";
+    var sortBy = ViewBag.SortBy as string ?? "title";
+    var showInactive = ViewBag.ShowInactive as bool? ?? false;
+}
+
+<h2>Membership Plans (@Model.TotalPlans)</h2>
+
+<p>
+    <a asp-action="Create">Create New Plan</a>
+</p>
+
+<form asp-action="Index" method="get">
+    <p>
+        <label>Sort by:</label>
+        <select name="sortBy">
+            <option value="title" selected="@(sortBy == "title")">Title</option>
+            <option value="price" selected="@(sortBy == "price")">Price (low to high)</option>
+            <option value="price_desc" selected="@(sortBy == "price_desc")">Price (high to low)</option>
+            <option value="duration" selected="@(sortBy == "duration")">Duration (short to long)</option>
+            <option value="duration_desc" selected="@(sortBy == "duration_desc")">Duration (long to short)</option>
+        </select>
+        <label>
+            <input type="checkbox" name="showInactive" value="true" checked="@showInactive" />
+            Show inactive plans
+        </label>
+        <button type="submit">Apply</button>
+    </p>
+</form>
+
+@if (!Model.Plans.Any())
+{
+    <p>No membership plans match the current filter.</p>
+}
+else
+{
+    foreach (var plan in Model.Plans)
+    {
+        <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
+            <h3>
+                @plan.Title
+                <small>(ID: @plan.Id, @(plan.IsActive ? "Active" : "Inactive"))</small>
+            </h3>
+            <p>
+                <strong>Price:</strong> @plan.Price.ToString("C") |
+                <strong>Duration:</strong> @plan.DurationInDays days |
+                <strong>Status:</strong> @(plan.IsActive ? "Active" : "Inactive")
+            </p>
+            <p>
+                <a asp-action="Details" asp-route-id="@plan.Id">Details</a>
+                <a asp-action="Edit" asp-route-id="@plan.Id">Edit</a>
+                @if (plan.IsActive)
+                {
+                    <form asp-action="Delete" asp-route-id="@plan.Id" method="post" onsubmit="return confirm('Deactivate this plan?');" style="display:inline;">
+                        <button type="submit">Deactivate</button>
+                    </form>
+                }
+                else
+                {
+                    <form asp-action="Activate" asp-route-id="@plan.Id" method="post" style="display:inline;">
+                        <button type="submit">Activate</button>
+                    </form>
+                }
+            </p>
+            @if (plan.AccessRules.Any())
+            {
+                <h4>Access Rules</h4>
+                <table border="1" cellpadding="5">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var rule in plan.AccessRules)
+                        {
+                            <tr>
+                                <td>@rule.RuleType</td>
+                                <td>@rule.RuleValue</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p><em>No access rules defined.</em></p>
+            }
+        </div>
+    }
+}

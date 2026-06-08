@@ -15,5 +15,7 @@ public class PlanConfiguration : IEntityTypeConfiguration<Plan>
         builder.Property(p => p.Description).IsRequired(false).HasMaxLength(500);
 
         builder.Property(p => p.Price).HasColumnType("decimal(18,2)");
+
+        builder.HasIndex(p => p.Title).IsUnique().HasDatabaseName("IX_Plans_Title");
     }
 }

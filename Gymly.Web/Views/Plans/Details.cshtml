@@ -1,0 +1,68 @@
+@model Gymly.Application.Features.Plans.Queries.GetPlanWithRules.PlanWithRulesDto
+
+@{
+    ViewData["Title"] = "Plan Details";
+}
+
+<h2>Plan Details</h2>
+
+<p>
+    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+</p>
+
+<table border="1" cellpadding="5">
+    <tr>
+        <th>ID</th>
+        <td>@Model.Id</td>
+    </tr>
+    <tr>
+        <th>Title</th>
+        <td>@Model.Title</td>
+    </tr>
+    <tr>
+        <th>Description</th>
+        <td>@Model.Description</td>
+    </tr>
+    <tr>
+        <th>Price</th>
+        <td>@Model.Price.ToString("C")</td>
+    </tr>
+    <tr>
+        <th>Duration (Days)</th>
+        <td>@Model.DurationInDays</td>
+    </tr>
+    <tr>
+        <th>Status</th>
+        <td>@(Model.IsActive ? "Active" : "Inactive")</td>
+    </tr>
+</table>
+
+<h3>Access Rules</h3>
+
+@if (Model.AccessRules.Any())
+{
+    <table border="1" cellpadding="5">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Rule Type</th>
+                <th>Rule Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var rule in Model.AccessRules)
+            {
+                <tr>
+                    <td>@rule.Id</td>
+                    <td>@rule.RuleType</td>
+                    <td>@rule.RuleValue</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No access rules defined for this plan.</p>
+}
