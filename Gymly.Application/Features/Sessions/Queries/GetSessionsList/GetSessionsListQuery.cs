@@ -1,5 +1,4 @@
 ﻿using Gymly.Application.Interfaces;
-using Gymly.Application.Interfaces.Common;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,8 +12,7 @@ public class GetSessionsListQueryHandler(IApplicationDbContext context)
     public async Task<List<SessionDto>> Handle(GetSessionsListQuery request, CancellationToken cancellationToken)
     {
         return await context.Sessions
-            .Include(s => s.Class)
-            .Include(s => s.Trainer)
+            .AsNoTracking()
             .Select(s => new SessionDto(
                 s.Id,
                 s.Class!.Name,

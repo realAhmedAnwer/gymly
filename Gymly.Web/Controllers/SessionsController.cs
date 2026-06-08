@@ -12,17 +12,17 @@ namespace Gymly.Web.Controllers;
 public class SessionsController(ISender mediator) : Controller
 {
     [HttpGet]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
-        var sessionDtos = await mediator.Send(new GetSessionsListQuery());
+        var sessionDtos = await mediator.Send(new GetSessionsListQuery(), cancellationToken);
         return View(new SessionsDashboardViewModel { Sessions = sessionDtos });
     }
 
     [HttpGet]
-    public async Task<IActionResult> Create()
+    public async Task<IActionResult> Create(CancellationToken cancellationToken)
     {
-        var classes = await mediator.Send(new GetClassesQuery());
-        var trainers = await mediator.Send(new GetTrainersQuery());
+        var classes = await mediator.Send(new GetClassesQuery(), cancellationToken);
+        var trainers = await mediator.Send(new GetTrainersQuery(), cancellationToken);
 
         var viewModel = new CreateSessionViewModel
         {
@@ -35,12 +35,12 @@ public class SessionsController(ISender mediator) : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create(CreateSessionViewModel model)
+    public async Task<IActionResult> Create(CreateSessionViewModel model, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
-            var classes = await mediator.Send(new GetClassesQuery());
-            var trainers = await mediator.Send(new GetTrainersQuery());
+            var classes = await mediator.Send(new GetClassesQuery(), cancellationToken);
+            var trainers = await mediator.Send(new GetTrainersQuery(), cancellationToken);
 
             model.AvailableClasses = classes.Select(c => new SelectListItem(c.Name, c.Id.ToString())).ToList();
             model.AvailableTrainers = trainers.Select(t => new SelectListItem(t.Name, t.Id.ToString())).ToList();
@@ -48,9 +48,25 @@ public class SessionsController(ISender mediator) : Controller
             return View(model);
         }
 
-        var command = new CreateSessionCommand(model.ClassId, model.TrainerId, model.StartTime, model.EndTime);
-        await mediator.Send(command);
+        try
+        {
+            var command = new CreateSessionCommand(model.ClassId, model.TrainerId, model.StartTime, model.EndTime);
+            await mediator.Send(command, cancellationToken);
 
-        return RedirectToAction(nameof(Index));
+            TempData["SuccessMessage"] = "Session scheduled successfully!";
+            return RedirectToAction(nameof(Index));
+        }
+        catch (ArgumentException ex)
+        {
+            ModelState.AddModelError(string.Empty, ex.Message);
+
+            var classes = await mediator.Send(new GetClassesQuery(), cancellationToken);
+            var trainers = await mediator.Send(new GetTrainersQuery(), cancellationToken);
+
+            model.AvailableClasses = classes.Select(c => new SelectListItem(c.Name, c.Id.ToString())).ToList();
+            model.AvailableTrainers = trainers.Select(t => new SelectListItem(t.Name, t.Id.ToString())).ToList();
+
+            return View(model);
+        }
     }
 }

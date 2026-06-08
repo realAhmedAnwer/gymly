@@ -1,20 +1,30 @@
-﻿using Gymly.Application.Interfaces.Repositories;
-using Gymly.Domain.Entities.Users;
+﻿using Gymly.Application.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Gymly.Application.Features.Trainers.Queries.GetAllTrainers;
 
-public class GetAllTrainersQueryHandler : IRequestHandler<GetAllTrainersQuery, IEnumerable<Trainer>>
+public class GetAllTrainersQueryHandler : IRequestHandler<GetAllTrainersQuery, List<TrainerDto>>
 {
-    private readonly ITrainerRepository _trainerRepository;
+    private readonly IApplicationDbContext _context;
 
-    public GetAllTrainersQueryHandler(ITrainerRepository trainerRepository)
+    public GetAllTrainersQueryHandler(IApplicationDbContext context)
     {
-        _trainerRepository = trainerRepository;
+        _context = context;
     }
 
-    public async Task<IEnumerable<Trainer>> Handle(GetAllTrainersQuery request, CancellationToken cancellationToken)
+    public async Task<List<TrainerDto>> Handle(GetAllTrainersQuery request, CancellationToken cancellationToken)
     {
-        return await _trainerRepository.GetAllTrainersAsync(cancellationToken);
+        return await _context.Trainers
+            .AsNoTracking()
+            .Select(t => new TrainerDto(
+                t.Id,
+                t.Name,
+                t.Email,
+                t.Phone,
+                t.Specialization,
+                t.HireDate
+            ))
+            .ToListAsync(cancellationToken);
     }
 }

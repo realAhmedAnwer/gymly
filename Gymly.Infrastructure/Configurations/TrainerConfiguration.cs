@@ -16,5 +16,7 @@ public class TrainerConfiguration : IEntityTypeConfiguration<Trainer>
         builder.Property(t => t.Specialization).IsRequired(false).HasMaxLength(100);
         builder.Property(t => t.HireDate)
             .IsRequired();
+
+        builder.HasIndex(t => t.Email).IsUnique().HasDatabaseName("IX_Trainers_Email");
     }
 }

@@ -9,4 +9,5 @@ public interface IMemberRepository
     Task<IEnumerable<Member>> GetAllActiveMembersAsync(CancellationToken cancellationToken = default);
     Task AddAsync(Member member, CancellationToken cancellationToken = default);
     void Update(Member member);
+    void Delete(Member member);
 }

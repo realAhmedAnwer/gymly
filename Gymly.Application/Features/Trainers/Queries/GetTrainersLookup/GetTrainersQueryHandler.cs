@@ -16,6 +16,7 @@ public class GetTrainersQueryHandler : IRequestHandler<GetTrainersQuery, IEnumer
     public async Task<IEnumerable<TrainerLookupDto>> Handle(GetTrainersQuery request, CancellationToken cancellationToken)
     {
         return await _context.Trainers
+            .AsNoTracking()
             .Select(t => new TrainerLookupDto
             {
                 Id = t.Id,

@@ -1,9 +1,9 @@
-﻿using Gymly.Domain.Entities.Users;
+﻿using Gymly.Application.Features.Trainers.Queries.GetAllTrainers;
 
 namespace Gymly.Web.Models.Trainers;
 
 public class TrainersIndexViewModel
 {
-    public IEnumerable<Trainer> Trainers { get; set; } = [];
-    public int TotalTrainers => Trainers.Count();
+    public List<TrainerDto> Trainers { get; set; } = [];
+    public int TotalTrainers => Trainers.Count;
 }

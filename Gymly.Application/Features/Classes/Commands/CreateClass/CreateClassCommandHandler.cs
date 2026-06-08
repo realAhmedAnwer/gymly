@@ -9,10 +9,10 @@ public class CreateClassCommandHandler(IApplicationDbContext context) : IRequest
 {
     public async Task<int> Handle(CreateClassCommand request, CancellationToken cancellationToken)
     {
-        var existingClass = await context.Classes
-            .FirstOrDefaultAsync(c => c.Name.ToLower() == request.Name.ToLower(), cancellationToken);
+        var classExists = await context.Classes
+            .AnyAsync(c => c.Name == request.Name, cancellationToken);
 
-        if (existingClass != null)
+        if (classExists)
         {
             throw new InvalidOperationException("A class with this name already exists.");
         }
