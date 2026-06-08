@@ -1,19 +1,22 @@
 ﻿using Gymly.Application.Interfaces;
-using Gymly.Application.Interfaces.Repositories;
+using Gymly.Domain.Entities.Users;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Gymly.Application.Features.Trainers.Commands.DeleteTrainer;
 
 public class DeleteTrainerCommandHandler(
-    ITrainerRepository trainerRepository,
     IApplicationDbContext context)
     : IRequestHandler<DeleteTrainerCommand, bool>
 {
     public async Task<bool> Handle(DeleteTrainerCommand request, CancellationToken cancellationToken)
     {
-        var trainer = await trainerRepository.GetByIdAsync(request.TrainerId, cancellationToken);
+        var trainer = await context.Trainers
+            .FirstOrDefaultAsync(t => t.Id == request.TrainerId, cancellationToken);
+
         if (trainer == null) return false;
-        trainerRepository.Delete(trainer);
+
+        context.Trainers.Remove(trainer);
         await context.SaveChangesAsync(cancellationToken);
 
         return true;
