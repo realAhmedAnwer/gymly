@@ -1,0 +1,42 @@
+@model Gymly.Web.Models.Bookings.CreateBookingViewModel
+
+@{
+    ViewData["Title"] = "Create Booking";
+}
+
+<h2>Create New Booking</h2>
+
+<form asp-action="Create" method="post">
+    <div asp-validation-summary="All" style="color:red;"></div>
+
+    <p>
+        <label>Session:</label><br />
+        <select asp-for="SessionId">
+            <option value="">-- Select Session --</option>
+            @foreach (var session in Model.AvailableSessions)
+            {
+                <option value="@session.Id">@session.Display</option>
+            }
+        </select>
+    </p>
+
+    <p>
+        <label>Member:</label><br />
+        <select asp-for="MemberId">
+            <option value="">-- Select Member --</option>
+            @foreach (var member in Model.AvailableMembers)
+            {
+                <option value="@member.Id">@member.Name</option>
+            }
+        </select>
+    </p>
+
+    <p>
+        <button type="submit">Book</button>
+        <a asp-action="Index">Cancel</a>
+    </p>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

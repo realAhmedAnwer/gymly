@@ -1,0 +1,97 @@
+@model Gymly.Web.Models.Bookings.BookingsIndexViewModel
+
+@{
+    ViewData["Title"] = "Bookings";
+}
+
+<h2>Bookings (@Model.TotalCount)</h2>
+
+<p>
+    <a asp-action="Create">Create New Booking</a>
+</p>
+
+<form asp-action="Index" method="get">
+    <p>
+        <label>Show cancelled:</label>
+        <input type="checkbox" name="showCancelled" value="true" checked="@Model.ShowCancelled" />
+        <button type="submit">Apply</button>
+    </p>
+</form>
+
+@if (!Model.Bookings.Any())
+{
+    <p>No bookings match the current filter.</p>
+}
+else
+{
+    <table border="1" cellpadding="5">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Session</th>
+                <th>Trainer</th>
+                <th>Member</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Booked At</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var booking in Model.Bookings)
+            {
+                <tr>
+                    <td>@booking.Id</td>
+                    <td>@booking.ClassName</td>
+                    <td>@booking.TrainerName</td>
+                    <td>@booking.MemberName</td>
+                    <td>@booking.StartTime.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@booking.EndTime.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@booking.BookedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>
+                        @if (booking.IsCancelled)
+                        {
+                            <span style="color: red;">Cancelled</span>
+                        }
+                        else
+                        {
+                            <span style="color: green;">Active</span>
+                        }
+                    </td>
+                    <td>
+                        @if (!booking.IsCancelled)
+                        {
+                            <form asp-action="Cancel" asp-route-id="@booking.Id" method="post" onsubmit="return confirm('Cancel this booking?');" style="display:inline;">
+                                <button type="submit">Cancel</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (Model.TotalPages > 1)
+    {
+        <p>
+            Page @Model.CurrentPage of @Model.TotalPages
+            @if (Model.CurrentPage > 1)
+            {
+                <a asp-action="Index"
+                   asp-route-page="@(Model.CurrentPage - 1)"
+                   asp-route-sessionId="@Model.FilterSessionId"
+                   asp-route-memberId="@Model.FilterMemberId"
+                   asp-route-showCancelled="@Model.ShowCancelled">Previous</a>
+            }
+            @if (Model.CurrentPage < Model.TotalPages)
+            {
+                <a asp-action="Index"
+                   asp-route-page="@(Model.CurrentPage + 1)"
+                   asp-route-sessionId="@Model.FilterSessionId"
+                   asp-route-memberId="@Model.FilterMemberId"
+                   asp-route-showCancelled="@Model.ShowCancelled">Next</a>
+            }
+        </p>
+    }
+}
