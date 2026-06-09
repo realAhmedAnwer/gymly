@@ -1,0 +1,51 @@
+@model Gymly.Web.Models.Memberships.AssignMembershipViewModel
+
+@{
+    ViewData["Title"] = "Assign Membership";
+}
+
+<h2>Assign Plan to Member</h2>
+
+<form asp-action="Create" method="post">
+    <input type="hidden" asp-for="MemberId" />
+
+    <table border="0" cellpadding="5">
+        <tr>
+            <td><strong>Member:</strong></td>
+            <td>@Model.MemberName</td>
+        </tr>
+        <tr>
+            <td><label asp-for="PlanId">Plan:</label></td>
+            <td>
+                <select asp-for="PlanId" asp-items="@(new SelectList(Model.AvailablePlans, "Id", "Title"))" required style="width: 300px; padding: 5px;">
+                    <option value="">-- Select Plan --</option>
+                </select>
+                <span asp-validation-for="PlanId" style="color: red;"></span>
+            </td>
+        </tr>
+        <tr>
+            <td><label asp-for="StartDate">Start Date:</label></td>
+            <td>
+                <input asp-for="StartDate" type="date" style="width: 300px; padding: 5px;" />
+                <span asp-validation-for="StartDate" style="color: red;"></span>
+            </td>
+        </tr>
+        <tr>
+            <td><label asp-for="DurationInDays">Duration (days):</label></td>
+            <td>
+                <input asp-for="DurationInDays" type="number" min="1" max="3650" style="width: 300px; padding: 5px;" placeholder="Leave empty to use plan default" />
+                <span asp-validation-for="DurationInDays" style="color: red;"></span>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="padding-top: 10px;">
+                <button type="submit" style="padding: 5px 15px;">Assign Membership</button>
+                <a asp-controller="Members" asp-action="Details" asp-route-id="@Model.MemberId" style="margin-left: 10px;">Cancel</a>
+            </td>
+        </tr>
+    </table>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
