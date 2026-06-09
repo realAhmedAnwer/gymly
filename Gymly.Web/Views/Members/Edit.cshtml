@@ -1,0 +1,55 @@
+@model Gymly.Web.Models.Members.EditMemberViewModel
+
+@{
+    ViewData["Title"] = "Edit Member";
+    var token = ViewBag.AttendanceCardToken as Guid?;
+}
+
+<h2>Edit Member</h2>
+
+<form asp-action="Edit" method="post">
+    <div asp-validation-summary="ModelOnly" style="color:red;"></div>
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="IsActive" />
+    <input type="hidden" asp-for="RegistrationDate" />
+
+    <p>
+        <label asp-for="Name">Full Name:</label><br />
+        <input asp-for="Name" />
+        <span asp-validation-for="Name" style="color:red;"></span>
+    </p>
+
+    <p>
+        <label asp-for="Email">Email:</label><br />
+        <input asp-for="Email" type="email" />
+        <span asp-validation-for="Email" style="color:red;"></span>
+    </p>
+
+    <p>
+        <label asp-for="Phone">Phone:</label><br />
+        <input asp-for="Phone" type="tel" />
+        <span asp-validation-for="Phone" style="color:red;"></span>
+    </p>
+
+    <p>
+        <strong>Status:</strong> @(Model.IsActive ? "Active" : "Inactive")<br />
+        <strong>Registered:</strong> @Model.RegistrationDate.ToString("yyyy-MM-dd")
+    </p>
+
+    @if (token.HasValue)
+    {
+        <p>
+            <strong>Attendance Card Token:</strong>
+            <code>@token.Value</code>
+        </p>
+    }
+
+    <p>
+        <button type="submit">Save Changes</button>
+        <a asp-action="Index">Cancel</a>
+    </p>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

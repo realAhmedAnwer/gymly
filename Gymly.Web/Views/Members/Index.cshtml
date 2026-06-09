@@ -1,0 +1,104 @@
+@model Gymly.Web.Models.Members.MembersIndexViewModel
+
+@{
+    ViewData["Title"] = "Member Management";
+}
+
+<h2>Members (@Model.TotalCount)</h2>
+
+<p>
+    <a asp-action="Create">Register New Member</a>
+</p>
+
+<form asp-action="Index" method="get">
+    <p>
+        <label>Search:</label>
+        <input type="text" name="searchTerm" value="@Model.SearchTerm" placeholder="Name or email..." />
+        <label>Sort by:</label>
+        <select name="sortBy">
+            <option value="name" selected="@(Model.SortBy == "name")">Name</option>
+            <option value="email" selected="@(Model.SortBy == "email")">Email</option>
+            <option value="email_desc" selected="@(Model.SortBy == "email_desc")">Email (Z-A)</option>
+            <option value="registrationdate" selected="@(Model.SortBy == "registrationdate")">Registration (oldest)</option>
+            <option value="registrationdate_desc" selected="@(Model.SortBy == "registrationdate_desc")">Registration (newest)</option>
+        </select>
+        <label>
+            <input type="checkbox" name="showInactive" value="true" checked="@Model.ShowInactive" />
+            Show inactive members
+        </label>
+        <button type="submit">Apply</button>
+    </p>
+</form>
+
+@if (!Model.Members.Any())
+{
+    <p>No members match the current filter.</p>
+}
+else
+{
+    <table border="1" cellpadding="5">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Registered</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var member in Model.Members)
+            {
+                <tr>
+                    <td>@member.Id</td>
+                    <td><strong>@member.Name</strong></td>
+                    <td>@member.Email</td>
+                    <td>@member.Phone</td>
+                    <td>@member.RegistrationDate.ToString("yyyy-MM-dd")</td>
+                    <td>@(member.IsActive ? "Active" : "Inactive")</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@member.Id">Details</a>
+                        <a asp-action="Edit" asp-route-id="@member.Id">Edit</a>
+                        @if (member.IsActive)
+                        {
+                            <form asp-action="Deactivate" asp-route-id="@member.Id" method="post" onsubmit="return confirm('Deactivate this member?');" style="display:inline;">
+                                <button type="submit">Deactivate</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form asp-action="Activate" asp-route-id="@member.Id" method="post" style="display:inline;">
+                                <button type="submit">Activate</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (Model.TotalPages > 1)
+    {
+        <p>
+            Page @Model.CurrentPage of @Model.TotalPages
+            @if (Model.CurrentPage > 1)
+            {
+                <a asp-action="Index"
+                   asp-route-page="@(Model.CurrentPage - 1)"
+                   asp-route-sortBy="@Model.SortBy"
+                   asp-route-showInactive="@Model.ShowInactive"
+                   asp-route-searchTerm="@Model.SearchTerm">Previous</a>
+            }
+            @if (Model.CurrentPage < Model.TotalPages)
+            {
+                <a asp-action="Index"
+                   asp-route-page="@(Model.CurrentPage + 1)"
+                   asp-route-sortBy="@Model.SortBy"
+                   asp-route-showInactive="@Model.ShowInactive"
+                   asp-route-searchTerm="@Model.SearchTerm">Next</a>
+            }
+        </p>
+    }
+}

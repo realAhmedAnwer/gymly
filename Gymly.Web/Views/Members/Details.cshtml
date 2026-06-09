@@ -1,0 +1,139 @@
+@model Gymly.Application.Features.Members.Queries.GetMembers.MemberDto
+
+@{
+    ViewData["Title"] = "Member Details";
+    var membership = ViewBag.Membership as Gymly.Application.Features.Members.Queries.GetMemberMembership.MemberMembershipDto;
+    var attendanceLogs = ViewBag.AttendanceLogs as List<Gymly.Application.Features.Members.Queries.GetMemberAttendanceLogs.AttendanceLogDto>;
+    var qrBase64 = ViewBag.QRCodeBase64 as string;
+}
+
+<h2>Member Details</h2>
+
+<table border="1" cellpadding="5">
+    <tr>
+        <th>ID</th>
+        <td>@Model.Id</td>
+    </tr>
+    <tr>
+        <th>Name</th>
+        <td><strong>@Model.Name</strong></td>
+    </tr>
+    <tr>
+        <th>Email</th>
+        <td>@Model.Email</td>
+    </tr>
+    <tr>
+        <th>Phone</th>
+        <td>@Model.Phone</td>
+    </tr>
+    <tr>
+        <th>Registration Date</th>
+        <td>@Model.RegistrationDate.ToString("yyyy-MM-dd")</td>
+    </tr>
+    <tr>
+        <th>Status</th>
+        <td>@(Model.IsActive ? "Active" : "Inactive")</td>
+    </tr>
+    <tr>
+        <th>Attendance Card Token</th>
+        <td><code>@Model.AttendanceCardToken</code></td>
+    </tr>
+    <tr>
+        <th>QR Code</th>
+        <td>
+            @if (!string.IsNullOrEmpty(qrBase64))
+            {
+                <img src="data:image/png;base64,@qrBase64" alt="Member QR Code" width="150" height="150" />
+            }
+        </td>
+    </tr>
+</table>
+
+<h3>Current Membership</h3>
+@if (membership != null)
+{
+    <table border="1" cellpadding="5">
+        <tr>
+            <th>Plan</th>
+            <td>@membership.PlanTitle</td>
+        </tr>
+        <tr>
+            <th>Price</th>
+            <td>@membership.PlanPrice.ToString("C")</td>
+        </tr>
+        <tr>
+            <th>Duration</th>
+            <td>@membership.PlanDurationDays days</td>
+        </tr>
+        <tr>
+            <th>Start Date</th>
+            <td>@membership.StartDate.ToString("yyyy-MM-dd")</td>
+        </tr>
+        <tr>
+            <th>End Date</th>
+            <td>@membership.EndDate.ToString("yyyy-MM-dd")</td>
+        </tr>
+        <tr>
+            <th>Status</th>
+            <td>
+                @membership.Status
+                @if (membership.IsCurrentlyValid)
+                {
+                    <span style="color: green;">(Valid)</span>
+                }
+                else
+                {
+                    <span style="color: red;">(Expired/Invalid)</span>
+                }
+            </td>
+        </tr>
+    </table>
+}
+else
+{
+    <p><em>No membership record found.</em></p>
+}
+
+<h3>Recent Check-in History</h3>
+@if (attendanceLogs != null && attendanceLogs.Any())
+{
+    <table border="1" cellpadding="5">
+        <thead>
+            <tr>
+                <th>Date/Time</th>
+                <th>Method</th>
+                <th>Result</th>
+                <th>Reason</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var log in attendanceLogs)
+            {
+                <tr>
+                    <td>@log.ScannedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@log.Method</td>
+                    <td>
+                        @if (log.WasGranted)
+                        {
+                            <span style="color: green;">Granted</span>
+                        }
+                        else
+                        {
+                            <span style="color: red;">Denied</span>
+                        }
+                    </td>
+                    <td>@(string.IsNullOrEmpty(log.RejectionReason) ? "-" : log.RejectionReason)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p><em>No check-in history found.</em></p>
+}
+
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+    <a asp-action="Index">Back to List</a>
+</p>

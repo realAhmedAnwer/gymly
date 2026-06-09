@@ -26,6 +26,7 @@ public static class DependencyInjection
 
         services.AddScoped<IMemberRepository, MemberRepository>();
         services.AddScoped<ITrainerRepository, TrainerRepository>();
+        services.AddScoped<IQrCodeService, QrCodeService>();
 
         return services;
     }
