@@ -1,0 +1,69 @@
+@model Gymly.Web.Models.Attendance.AttendanceIndexViewModel
+
+@{
+    ViewData["Title"] = "Attendance";
+}
+
+<h2>Check-In</h2>
+
+<h3>Scan QR Code</h3>
+<form asp-action="CheckInByQr" method="post" style="margin-bottom: 20px;">
+    <input type="text" name="qrToken" placeholder="Scan or enter QR token" required style="width: 300px; padding: 5px;" />
+    <button type="submit" style="padding: 5px 15px;">Check In</button>
+</form>
+
+<h3>Manual Check-In</h3>
+<form asp-action="ManualCheckIn" method="post" style="margin-bottom: 20px;">
+    <select name="memberId" required style="width: 300px; padding: 5px;">
+        <option value="">-- Select Member --</option>
+        @foreach (var member in Model.CheckIn.AvailableMembers)
+        {
+            <option value="@member.Id">@member.Name</option>
+        }
+    </select>
+    <button type="submit" style="padding: 5px 15px;">Check In</button>
+</form>
+
+<h3>Recent Check-Ins</h3>
+
+@if (Model.RecentCheckIns.Any())
+{
+    <table border="1" cellpadding="5">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Member</th>
+                <th>Date/Time</th>
+                <th>Method</th>
+                <th>Result</th>
+                <th>Reason</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var checkin in Model.RecentCheckIns)
+            {
+                <tr>
+                    <td>@checkin.Id</td>
+                    <td>@checkin.MemberName</td>
+                    <td>@checkin.ScannedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@checkin.Method</td>
+                    <td>
+                        @if (checkin.WasGranted)
+                        {
+                            <span style="color: green;">Granted</span>
+                        }
+                        else
+                        {
+                            <span style="color: red;">Denied</span>
+                        }
+                    </td>
+                    <td>@(string.IsNullOrEmpty(checkin.RejectionReason) ? "-" : checkin.RejectionReason)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p><em>No check-in history found.</em></p>
+}

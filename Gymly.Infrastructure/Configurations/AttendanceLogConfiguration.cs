@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Gymly.Domain.Entities.Schedules;
-using Gymly.Domain.Entities.Users;
 
 namespace Gymly.Infrastructure.Configurations;
 
@@ -27,7 +26,7 @@ public class AttendanceLogConfiguration : IEntityTypeConfiguration<AttendanceLog
                .IsRequired()
                .HasMaxLength(250);
 
-        builder.HasOne<Member>()
+        builder.HasOne(al => al.Member)
                .WithMany()
                .HasForeignKey(al => al.MemberId)
                .OnDelete(DeleteBehavior.Cascade);

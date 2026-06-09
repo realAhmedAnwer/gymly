@@ -1,10 +1,12 @@
-﻿using Gymly.Domain.Enums;
+﻿using Gymly.Domain.Entities.Users;
+using Gymly.Domain.Enums;
 
 namespace Gymly.Domain.Entities.Schedules;
 
 public class AttendanceLog : BaseEntity
 {
     public int MemberId { get; set; }
+    public Member Member { get; set; } = default!;
     public DateTime ScannedAt { get; set; } = DateTime.UtcNow;
     public AccessMethod Method { get; set; }
     public bool WasGranted { get; set; }
