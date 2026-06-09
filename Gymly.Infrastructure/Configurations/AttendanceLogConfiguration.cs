@@ -30,5 +30,7 @@ public class AttendanceLogConfiguration : IEntityTypeConfiguration<AttendanceLog
                .WithMany()
                .HasForeignKey(al => al.MemberId)
                .OnDelete(DeleteBehavior.Cascade);
+               
+        builder.HasIndex(al => new { al.MemberId, al.ScannedAt });
     }
 }

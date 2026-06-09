@@ -3,6 +3,7 @@ using Gymly.Application.Features.Members.Commands.CreateMember;
 using Gymly.Application.Features.Members.Commands.DeactivateMember;
 using Gymly.Application.Features.Members.Commands.UpdateMember;
 using Gymly.Application.Features.Members.Queries.GetMemberAttendanceLogs;
+using Gymly.Application.Features.Members.Queries.GetMemberById;
 using Gymly.Application.Features.Members.Queries.GetMemberMembership;
 using Gymly.Application.Features.Members.Queries.GetMembers;
 using Gymly.Application.Interfaces.Common;
@@ -68,8 +69,7 @@ public class MembersController(ISender mediator, IQrCodeService qrCodeService) :
     [HttpGet]
     public async Task<IActionResult> Details(int id, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new GetMembersQuery(true, null, null, 1, int.MaxValue), cancellationToken);
-        var member = result.Members.FirstOrDefault(m => m.Id == id);
+        var member = await mediator.Send(new GetMemberByIdQuery(id), cancellationToken);
         if (member == null) return NotFound();
 
         var membership = await mediator.Send(new GetMemberMembershipQuery(id), cancellationToken);
@@ -88,8 +88,7 @@ public class MembersController(ISender mediator, IQrCodeService qrCodeService) :
     [HttpGet]
     public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken)
     {
-        var result = await mediator.Send(new GetMembersQuery(true, null, null, 1, int.MaxValue), cancellationToken);
-        var member = result.Members.FirstOrDefault(m => m.Id == id);
+        var member = await mediator.Send(new GetMemberByIdQuery(id), cancellationToken);
         if (member == null) return NotFound();
 
         var viewModel = new EditMemberViewModel
@@ -112,9 +111,8 @@ public class MembersController(ISender mediator, IQrCodeService qrCodeService) :
     {
         if (!ModelState.IsValid)
         {
-            var tokenResult = await mediator.Send(new GetMembersQuery(true, null, null, 1, int.MaxValue), cancellationToken);
-            var tokenMember = tokenResult.Members.FirstOrDefault(m => m.Id == model.Id);
-            ViewBag.AttendanceCardToken = tokenMember?.AttendanceCardToken;
+            var member = await mediator.Send(new GetMemberByIdQuery(model.Id), cancellationToken);
+            ViewBag.AttendanceCardToken = member?.AttendanceCardToken;
             return View(model);
         }
 
@@ -129,9 +127,8 @@ public class MembersController(ISender mediator, IQrCodeService qrCodeService) :
         catch (InvalidOperationException ex)
         {
             ModelState.AddModelError("Email", ex.Message);
-            var tokenResult = await mediator.Send(new GetMembersQuery(true, null, null, 1, int.MaxValue), cancellationToken);
-            var tokenMember = tokenResult.Members.FirstOrDefault(m => m.Id == model.Id);
-            ViewBag.AttendanceCardToken = tokenMember?.AttendanceCardToken;
+            var member = await mediator.Send(new GetMemberByIdQuery(model.Id), cancellationToken);
+            ViewBag.AttendanceCardToken = member?.AttendanceCardToken;
             return View(model);
         }
     }

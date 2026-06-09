@@ -24,5 +24,6 @@ public class BookingConfiguration : IEntityTypeConfiguration<Booking>
                .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasIndex(b => new { b.SessionId, b.MemberId }).IsUnique();
+        builder.HasIndex(b => new { b.SessionId, b.IsCancelled });
     }
 }

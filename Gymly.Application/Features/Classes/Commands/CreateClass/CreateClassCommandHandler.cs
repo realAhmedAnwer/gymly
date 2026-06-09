@@ -9,8 +9,11 @@ public class CreateClassCommandHandler(IApplicationDbContext context) : IRequest
 {
     public async Task<int> Handle(CreateClassCommand request, CancellationToken cancellationToken)
     {
+        // Normalize class name: trim + lowercase for case-insensitive uniqueness
+        var normalizedName = request.Name.Trim().ToLowerInvariant();
+
         var classExists = await context.Classes
-            .AnyAsync(c => c.Name == request.Name, cancellationToken);
+            .AnyAsync(c => c.Name == normalizedName, cancellationToken);
 
         if (classExists)
         {
@@ -19,7 +22,7 @@ public class CreateClassCommandHandler(IApplicationDbContext context) : IRequest
 
         var fitnessClass = new Class
         {
-            Name = request.Name,
+            Name = normalizedName,
             Description = request.Description,
             MaxCapacity = request.MaxCapacity
         };

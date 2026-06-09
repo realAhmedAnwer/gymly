@@ -30,8 +30,6 @@ public class HomeController(IApplicationDbContext context) : Controller
             .CountAsync(s => s.StartTime >= todayStart && s.StartTime < todayEnd, cancellationToken);
 
         var upcomingSessions = await context.Sessions
-            .Include(s => s.Class)
-            .Include(s => s.Trainer)
             .Where(s => s.StartTime > DateTime.UtcNow)
             .OrderBy(s => s.StartTime)
             .Take(5)

@@ -22,5 +22,7 @@ public class MembershipConfiguration : IEntityTypeConfiguration<Membership>
                .WithMany()
                .HasForeignKey(m => m.PlanId)
                .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasIndex(m => new { m.MemberId, m.Status, m.EndDate });
     }
 }

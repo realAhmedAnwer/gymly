@@ -10,8 +10,10 @@ public class CreateTrainerCommandHandler(
 {
     public async Task<int> Handle(CreateTrainerCommand request, CancellationToken cancellationToken)
     {
+        var normalizedEmail = request.Email.Trim().ToLowerInvariant();
+
         var emailExists = await context.Trainers
-            .AnyAsync(t => t.Email == request.Email, cancellationToken);
+            .AnyAsync(t => t.Email == normalizedEmail, cancellationToken);
 
         if (emailExists)
         {
@@ -21,7 +23,7 @@ public class CreateTrainerCommandHandler(
         var trainer = new Trainer
         {
             Name = request.Name,
-            Email = request.Email,
+            Email = normalizedEmail,
             Phone = request.Phone,
             Specialization = request.Specialization,
             HireDate = DateTime.UtcNow

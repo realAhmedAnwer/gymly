@@ -14,8 +14,10 @@ public class CreateMemberCommandHandler(IApplicationDbContext context) : IReques
 {
     public async Task<int> Handle(CreateMemberCommand request, CancellationToken cancellationToken)
     {
+        var normalizedEmail = request.Email.Trim().ToLowerInvariant();
+
         var emailExists = await context.Members
-            .AnyAsync(m => m.Email == request.Email, cancellationToken);
+            .AnyAsync(m => m.Email == normalizedEmail, cancellationToken);
 
         if (emailExists)
         {
@@ -25,7 +27,7 @@ public class CreateMemberCommandHandler(IApplicationDbContext context) : IReques
         var member = new Member
         {
             Name = request.Name,
-            Email = request.Email,
+            Email = normalizedEmail,
             Phone = request.Phone,
             RegistrationDate = DateTime.UtcNow,
             AttendanceCardToken = Guid.NewGuid(),

@@ -15,13 +15,16 @@ public class SessionConfiguration : IEntityTypeConfiguration<Session>
         builder.Property(s => s.EndTime).IsRequired();
 
         builder.HasOne(s => s.Class)
-                       .WithMany()
-                       .HasForeignKey(s => s.ClassId)
-                       .OnDelete(DeleteBehavior.Cascade);
+                .WithMany()
+                .HasForeignKey(s => s.ClassId)
+                .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(s => s.Trainer)
                .WithMany()
                .HasForeignKey(s => s.TrainerId)
                .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasIndex(s => s.StartTime);
+        builder.HasIndex(s => new { s.TrainerId, s.StartTime, s.EndTime });
     }
 }
