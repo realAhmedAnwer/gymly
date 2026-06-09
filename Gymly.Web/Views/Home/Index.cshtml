@@ -1,8 +1,88 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Dashboard";
+    var upcomingSessions = ViewBag.UpcomingSessions as List<Gymly.Web.Controllers.UpcomingSessionDto>;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<h2>Gymly Dashboard</h2>
+
+<div style="display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 20px;">
+
+    <div style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; min-width: 160px; text-align: center; background-color: #e3f2fd;">
+        <div style="font-size: 28px; font-weight: bold;">@ViewBag.TotalMembers</div>
+        <div>Total Members</div>
+        <div style="font-size: 12px; color: #666;">@ViewBag.ActiveMembers active / @ViewBag.InactiveMembers inactive</div>
+    </div>
+
+    <div style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; min-width: 160px; text-align: center; background-color: #e8f5e9;">
+        <div style="font-size: 28px; font-weight: bold;">@ViewBag.ActiveMemberships</div>
+        <div>Active Memberships</div>
+    </div>
+
+    <div style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; min-width: 160px; text-align: center; background-color: #fff3e0;">
+        <div style="font-size: 28px; font-weight: bold;">@ViewBag.TrainersCount</div>
+        <div>Trainers</div>
+    </div>
+
+    <div style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; min-width: 160px; text-align: center; background-color: #f3e5f5;">
+        <div style="font-size: 28px; font-weight: bold;">@ViewBag.ClassesCount</div>
+        <div>Classes</div>
+    </div>
+
+    <div style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; min-width: 160px; text-align: center; background-color: #e0f7fa;">
+        <div style="font-size: 28px; font-weight: bold;">@ViewBag.ActivePlans</div>
+        <div>Active Plans</div>
+    </div>
+
+    <div style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; min-width: 160px; text-align: center; background-color: #fce4ec;">
+        <div style="font-size: 28px; font-weight: bold;">@ViewBag.TodaySessions</div>
+        <div>Today's Sessions</div>
+    </div>
+
+    <div style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; min-width: 160px; text-align: center; background-color: #e8eaf6;">
+        <div style="font-size: 28px; font-weight: bold;">@ViewBag.TodayCheckIns</div>
+        <div>Check-Ins Today</div>
+    </div>
+
+    <div style="border: 1px solid #ddd; border-radius: 8px; padding: 15px; min-width: 160px; text-align: center; background-color: #fffde7;">
+        <div style="font-size: 28px; font-weight: bold;">@ViewBag.TotalBookingsToday</div>
+        <div>Bookings Today</div>
+    </div>
+
 </div>
+
+<h3>Upcoming Sessions</h3>
+
+@if (upcomingSessions != null && upcomingSessions.Any())
+{
+    <table border="1" cellpadding="5">
+        <thead>
+            <tr>
+                <th>Class</th>
+                <th>Trainer</th>
+                <th>Start</th>
+                <th>End</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var session in upcomingSessions)
+            {
+                <tr>
+                    <td>@session.ClassName</td>
+                    <td>@session.TrainerName</td>
+                    <td>@session.StartTime.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@session.EndTime.ToString("yyyy-MM-dd HH:mm")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p><em>No upcoming sessions scheduled.</em></p>
+}
+
+<p style="margin-top: 20px;">
+    <a asp-controller="Members" asp-action="Index">Manage Members</a> |
+    <a asp-controller="Sessions" asp-action="Index">View All Sessions</a> |
+    <a asp-controller="Attendance" asp-action="Index">Check-In</a>
+</p>
