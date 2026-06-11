@@ -1,16 +1,15 @@
 using Gymly.Application.Features.Attendance.Commands.ProcessCheckIn;
 using Gymly.Application.Features.Attendance.Queries.GetRecentCheckIns;
+using Gymly.Application.Features.Members.Queries.SearchMembers;
 using Gymly.Application.Interfaces;
 using Gymly.Domain.Enums;
 using Gymly.Web.Models.Attendance;
-using Gymly.Web.Models.Bookings;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Gymly.Web.Controllers;
 
-public class AttendanceController(ISender mediator, IApplicationDbContext context) : Controller
+public class AttendanceController(ISender mediator) : Controller
 {
     [HttpGet]
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
@@ -20,18 +19,7 @@ public class AttendanceController(ISender mediator, IApplicationDbContext contex
         var viewModel = new AttendanceIndexViewModel
         {
             RecentCheckIns = recentCheckIns,
-            CheckIn = new CheckInViewModel
-            {
-                AvailableMembers = await context.Members
-                    .Where(m => m.IsActive)
-                    .OrderBy(m => m.Name)
-                    .Select(m => new MemberOption
-                    {
-                        Id = m.Id,
-                        Name = m.Name
-                    })
-                    .ToListAsync(cancellationToken)
-            }
+            CheckIn = new CheckInViewModel()
         };
 
         return View(viewModel);
@@ -71,6 +59,12 @@ public class AttendanceController(ISender mediator, IApplicationDbContext contex
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ManualCheckIn(int memberId, CancellationToken cancellationToken)
     {
+        if (memberId <= 0)
+        {
+            TempData["ErrorMessage"] = "Please select a member.";
+            return RedirectToAction(nameof(Index));
+        }
+
         var result = await mediator.Send(new ProcessCheckInCommand(null, memberId, AccessMethod.ManualReceptionOverride), cancellationToken);
 
         if (result.WasGranted)
@@ -83,5 +77,12 @@ public class AttendanceController(ISender mediator, IApplicationDbContext contex
         }
 
         return RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> SearchMembers(string term, CancellationToken cancellationToken)
+    {
+        var results = await mediator.Send(new SearchMembersQuery(term ?? string.Empty), cancellationToken);
+        return Json(results);
     }
 }

@@ -1,5 +1,4 @@
 using Gymly.Application.Features.Attendance.Queries.GetRecentCheckIns;
-using Gymly.Web.Models.Bookings;
 
 namespace Gymly.Web.Models.Attendance;
 

@@ -1,28 +1,38 @@
 @model Gymly.Web.Models.Attendance.AttendanceIndexViewModel
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
 
 @{
     ViewData["Title"] = "Attendance";
+    var antiforgeryToken = Antiforgery.GetAndStoreTokens(Context).RequestToken;
 }
 
 <h2>Check-In</h2>
 
 <h3>Scan QR Code</h3>
-<form asp-action="CheckInByQr" method="post" style="margin-bottom: 20px;">
-    <input type="text" name="qrToken" placeholder="Scan or enter QR token" required style="width: 300px; padding: 5px;" />
+<form id="qrForm" asp-action="CheckInByQr" method="post" style="margin-bottom: 20px;">
+    @Html.AntiForgeryToken()
+    <input type="text" id="qrTokenInput" name="qrToken" placeholder="Scan or enter QR token" autofocus
+           autocomplete="off" style="width: 300px; padding: 5px;" />
     <button type="submit" style="padding: 5px 15px;">Check In</button>
 </form>
 
 <h3>Manual Check-In</h3>
-<form asp-action="ManualCheckIn" method="post" style="margin-bottom: 20px;">
-    <select name="memberId" required style="width: 300px; padding: 5px;">
-        <option value="">-- Select Member --</option>
-        @foreach (var member in Model.CheckIn.AvailableMembers)
-        {
-            <option value="@member.Id">@member.Name</option>
-        }
-    </select>
-    <button type="submit" style="padding: 5px 15px;">Check In</button>
+<form id="manualForm" asp-action="ManualCheckIn" method="post" style="margin-bottom: 20px;">
+    @Html.AntiForgeryToken()
+    <input type="hidden" id="selectedMemberId" name="memberId" value="" />
+    <input type="text" id="memberSearch" name="searchTerm" placeholder="Search by name, email, or phone"
+           autocomplete="off" style="width: 300px; padding: 5px;" />
+    <button type="submit" id="manualSubmit" disabled style="padding: 5px 15px;">Check In</button>
+    <div id="selectedMemberDisplay" style="margin-top: 5px;"></div>
+    <ul id="searchResults" style="list-style: none; padding: 0; margin: 5px 0 0 0; max-width: 300px;"></ul>
 </form>
+
+<script>
+    window.gymlyAttendance = {
+        searchUrl: '@Url.Action("SearchMembers", "Attendance")',
+        antiforgeryToken: '@antiforgeryToken'
+    };
+</script>
 
 <h3>Recent Check-Ins</h3>
 
@@ -66,4 +76,8 @@
 else
 {
     <p><em>No check-in history found.</em></p>
+}
+
+@section Scripts {
+    <script src="~/js/attendance.js" asp-append-version="true"></script>
 }
