@@ -18,13 +18,14 @@
             <th>Trainer Name</th>
             <th>Starts At</th>
             <th>Ends At</th>
+            <th>Capacity</th>
         </tr>
     </thead>
     <tbody>
         @if (!Model.Sessions.Any())
         {
             <tr>
-                <td colspan="5">No sessions scheduled for today.</td>
+                <td colspan="6">No sessions scheduled for today.</td>
             </tr>
         }
         else
@@ -37,6 +38,20 @@
                     <td>@session.TrainerName</td>
                     <td>@session.StartTime</td>
                     <td>@session.EndTime</td>
+                    <td>
+                        @if (session.MaxCapacity > 0)
+                        {
+                            var fillPercent = session.MaxCapacity > 0 ? (session.BookedCount * 100 / session.MaxCapacity) : 0;
+                            var color = fillPercent >= 100 ? "red" : fillPercent >= 80 ? "orange" : "green";
+                            <span style="color: @color; font-weight: bold;">
+                                @session.BookedCount / @session.MaxCapacity
+                            </span>
+                        }
+                        else
+                        {
+                            <span>@session.BookedCount / Unlimited</span>
+                        }
+                    </td>
                 </tr>
             }
         }

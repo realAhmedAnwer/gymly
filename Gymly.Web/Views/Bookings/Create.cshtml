@@ -15,9 +15,16 @@
             <option value="">-- Select Session --</option>
             @foreach (var session in Model.AvailableSessions)
             {
-                <option value="@session.Id">@session.Display</option>
+                <option value="@session.Id" disabled="@session.IsFull">
+                    @session.Display
+                    @(session.MaxCapacity > 0 ? ("(" + session.BookedCount + "/" + session.MaxCapacity + (session.IsFull ? " - FULL)" : ")")) : "")
+                </option>
             }
         </select>
+        @if (Model.AvailableSessions.Any(s => s.IsFull))
+        {
+            <br /><span style="color: #888; font-size: 0.85em;">Full sessions are disabled.</span>
+        }
     </p>
 
     <p>

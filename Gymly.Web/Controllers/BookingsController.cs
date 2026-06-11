@@ -36,12 +36,15 @@ public class BookingsController(ISender mediator, IApplicationDbContext context)
     {
         var sessions = await context.Sessions
             .Include(s => s.Class)
+            .Include(s => s.Bookings)
             .Where(s => s.EndTime > DateTime.UtcNow)
             .OrderBy(s => s.StartTime)
             .Select(s => new SessionOption
             {
                 Id = s.Id,
-                Display = $"{s.Class!.Name} - {s.StartTime:yyyy-MM-dd HH:mm}"
+                Display = $"{s.Class!.Name} - {s.StartTime:yyyy-MM-dd HH:mm}",
+                BookedCount = s.Bookings.Count(b => !b.IsCancelled),
+                MaxCapacity = s.Class!.MaxCapacity
             })
             .ToListAsync(cancellationToken);
 
@@ -101,12 +104,15 @@ public class BookingsController(ISender mediator, IApplicationDbContext context)
     {
         model.AvailableSessions = await context.Sessions
             .Include(s => s.Class)
+            .Include(s => s.Bookings)
             .Where(s => s.EndTime > DateTime.UtcNow)
             .OrderBy(s => s.StartTime)
             .Select(s => new SessionOption
             {
                 Id = s.Id,
-                Display = $"{s.Class!.Name} - {s.StartTime:yyyy-MM-dd HH:mm}"
+                Display = $"{s.Class!.Name} - {s.StartTime:yyyy-MM-dd HH:mm}",
+                BookedCount = s.Bookings.Count(b => !b.IsCancelled),
+                MaxCapacity = s.Class!.MaxCapacity
             })
             .ToListAsync(cancellationToken);
 

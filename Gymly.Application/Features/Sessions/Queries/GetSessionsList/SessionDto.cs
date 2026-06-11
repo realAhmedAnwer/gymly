@@ -5,5 +5,7 @@ public record SessionDto(
     string ClassName,
     string TrainerName,
     DateTime StartTime,
-    DateTime EndTime
+    DateTime EndTime,
+    int BookedCount = 0,
+    int MaxCapacity = 0
 );

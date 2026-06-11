@@ -18,6 +18,9 @@ public class SessionOption
 {
     public int Id { get; set; }
     public string Display { get; set; } = string.Empty;
+    public int BookedCount { get; set; }
+    public int MaxCapacity { get; set; }
+    public bool IsFull => BookedCount >= MaxCapacity;
 }
 
 public class MemberOption

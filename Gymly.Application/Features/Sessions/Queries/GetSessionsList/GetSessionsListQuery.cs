@@ -18,7 +18,9 @@ public class GetSessionsListQueryHandler(IApplicationDbContext context)
                 s.Class!.Name,
                 s.Trainer!.Name,
                 s.StartTime,
-                s.EndTime
+                s.EndTime,
+                s.Bookings.Count(b => !b.IsCancelled),
+                s.Class!.MaxCapacity
             ))
             .ToListAsync(cancellationToken);
     }
