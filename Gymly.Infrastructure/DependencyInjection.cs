@@ -1,7 +1,5 @@
 ﻿using Gymly.Application.Interfaces;
 using Gymly.Application.Interfaces.Common;
-using Gymly.Application.Interfaces.Repositories;
-using Gymly.Infrastructure.Repositories;
 using Gymly.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -23,9 +21,6 @@ public static class DependencyInjection
 
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
-
-        services.AddScoped<IMemberRepository, MemberRepository>();
-        services.AddScoped<ITrainerRepository, TrainerRepository>();
         services.AddScoped<IQrCodeService, QrCodeService>();
 
         return services;
