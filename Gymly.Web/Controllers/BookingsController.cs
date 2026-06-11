@@ -1,15 +1,14 @@
 using Gymly.Application.Features.Bookings.Commands.CancelBooking;
 using Gymly.Application.Features.Bookings.Commands.CreateBooking;
 using Gymly.Application.Features.Bookings.Queries.GetBookings;
-using Gymly.Application.Interfaces;
+using Gymly.Application.Features.Bookings.Queries.GetBookingFormData;
 using Gymly.Web.Models.Bookings;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Gymly.Web.Controllers;
 
-public class BookingsController(ISender mediator, IApplicationDbContext context) : Controller
+public class BookingsController(ISender mediator) : Controller
 {
     [HttpGet]
     public async Task<IActionResult> Index(int? sessionId, int? memberId, bool? showCancelled, int? page, CancellationToken cancellationToken)
@@ -34,34 +33,22 @@ public class BookingsController(ISender mediator, IApplicationDbContext context)
     [HttpGet]
     public async Task<IActionResult> Create(CancellationToken cancellationToken)
     {
-        var sessions = await context.Sessions
-            .Include(s => s.Class)
-            .Include(s => s.Bookings)
-            .Where(s => s.EndTime > DateTime.UtcNow)
-            .OrderBy(s => s.StartTime)
-            .Select(s => new SessionOption
-            {
-                Id = s.Id,
-                Display = $"{s.Class!.Name} - {s.StartTime:yyyy-MM-dd HH:mm}",
-                BookedCount = s.Bookings.Count(b => !b.IsCancelled),
-                MaxCapacity = s.Class!.MaxCapacity
-            })
-            .ToListAsync(cancellationToken);
-
-        var members = await context.Members
-            .Where(m => m.IsActive)
-            .OrderBy(m => m.Name)
-            .Select(m => new MemberOption
-            {
-                Id = m.Id,
-                Name = m.Name
-            })
-            .ToListAsync(cancellationToken);
+        var formData = await mediator.Send(new GetBookingFormDataQuery(), cancellationToken);
 
         var viewModel = new CreateBookingViewModel
         {
-            AvailableSessions = sessions,
-            AvailableMembers = members
+            AvailableSessions = formData.AvailableSessions.Select(s => new SessionOption
+            {
+                Id = s.Id,
+                Display = s.Display,
+                BookedCount = s.BookedCount,
+                MaxCapacity = s.MaxCapacity
+            }).ToList(),
+            AvailableMembers = formData.AvailableMembers.Select(m => new MemberOption
+            {
+                Id = m.Id,
+                Name = m.Name
+            }).ToList()
         };
 
         return View(viewModel);
@@ -102,28 +89,20 @@ public class BookingsController(ISender mediator, IApplicationDbContext context)
 
     private async Task PopulateDropdowns(CreateBookingViewModel model, CancellationToken cancellationToken)
     {
-        model.AvailableSessions = await context.Sessions
-            .Include(s => s.Class)
-            .Include(s => s.Bookings)
-            .Where(s => s.EndTime > DateTime.UtcNow)
-            .OrderBy(s => s.StartTime)
-            .Select(s => new SessionOption
-            {
-                Id = s.Id,
-                Display = $"{s.Class!.Name} - {s.StartTime:yyyy-MM-dd HH:mm}",
-                BookedCount = s.Bookings.Count(b => !b.IsCancelled),
-                MaxCapacity = s.Class!.MaxCapacity
-            })
-            .ToListAsync(cancellationToken);
+        var formData = await mediator.Send(new GetBookingFormDataQuery(), cancellationToken);
 
-        model.AvailableMembers = await context.Members
-            .Where(m => m.IsActive)
-            .OrderBy(m => m.Name)
-            .Select(m => new MemberOption
-            {
-                Id = m.Id,
-                Name = m.Name
-            })
-            .ToListAsync(cancellationToken);
+        model.AvailableSessions = formData.AvailableSessions.Select(s => new SessionOption
+        {
+            Id = s.Id,
+            Display = s.Display,
+            BookedCount = s.BookedCount,
+            MaxCapacity = s.MaxCapacity
+        }).ToList();
+
+        model.AvailableMembers = formData.AvailableMembers.Select(m => new MemberOption
+        {
+            Id = m.Id,
+            Name = m.Name
+        }).ToList();
     }
 }

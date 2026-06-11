@@ -1,13 +1,12 @@
 using Gymly.Application.Features.Memberships.Commands.AssignMemberToPlan;
-using Gymly.Application.Interfaces;
+using Gymly.Application.Features.Memberships.Queries.GetMembershipFormData;
 using Gymly.Web.Models.Memberships;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Gymly.Web.Controllers;
 
-public class MembershipsController(ISender mediator, IApplicationDbContext context) : Controller
+public class MembershipsController(ISender mediator) : Controller
 {
     [HttpGet]
     public async Task<IActionResult> Create(int? memberId, CancellationToken cancellationToken)
@@ -18,10 +17,9 @@ public class MembershipsController(ISender mediator, IApplicationDbContext conte
             return RedirectToAction("Index", "Members");
         }
 
-        var member = await context.Members
-            .FirstOrDefaultAsync(m => m.Id == memberId.Value && m.IsActive, cancellationToken);
+        var formData = await mediator.Send(new GetMembershipFormDataQuery(memberId.Value), cancellationToken);
 
-        if (member == null)
+        if (formData == null)
         {
             TempData["ErrorMessage"] = "Member not found or inactive.";
             return RedirectToAction("Index", "Members");
@@ -29,18 +27,14 @@ public class MembershipsController(ISender mediator, IApplicationDbContext conte
 
         var viewModel = new AssignMembershipViewModel
         {
-            MemberId = member.Id,
-            MemberName = member.Name,
-            AvailablePlans = await context.Plans
-                .Where(p => p.IsActive)
-                .OrderBy(p => p.Title)
-                .Select(p => new PlanOption
-                {
-                    Id = p.Id,
-                    Title = p.Title,
-                    DurationInDays = p.DurationInDays
-                })
-                .ToListAsync(cancellationToken)
+            MemberId = formData.MemberId,
+            MemberName = formData.MemberName,
+            AvailablePlans = formData.AvailablePlans.Select(p => new PlanOption
+            {
+                Id = p.Id,
+                Title = p.Title,
+                DurationInDays = p.DurationInDays
+            }).ToList()
         };
 
         return View(viewModel);
@@ -52,20 +46,7 @@ public class MembershipsController(ISender mediator, IApplicationDbContext conte
     {
         if (!ModelState.IsValid)
         {
-            model.MemberName = (await context.Members
-                .FirstOrDefaultAsync(m => m.Id == model.MemberId, cancellationToken))?.Name;
-
-            model.AvailablePlans = await context.Plans
-                .Where(p => p.IsActive)
-                .OrderBy(p => p.Title)
-                .Select(p => new PlanOption
-                {
-                    Id = p.Id,
-                    Title = p.Title,
-                    DurationInDays = p.DurationInDays
-                })
-                .ToListAsync(cancellationToken);
-
+            await PopulateFormData(model, cancellationToken);
             return View(model);
         }
 
@@ -83,22 +64,23 @@ public class MembershipsController(ISender mediator, IApplicationDbContext conte
         catch (InvalidOperationException ex)
         {
             ModelState.AddModelError(string.Empty, ex.Message);
-
-            model.MemberName = (await context.Members
-                .FirstOrDefaultAsync(m => m.Id == model.MemberId, cancellationToken))?.Name;
-
-            model.AvailablePlans = await context.Plans
-                .Where(p => p.IsActive)
-                .OrderBy(p => p.Title)
-                .Select(p => new PlanOption
-                {
-                    Id = p.Id,
-                    Title = p.Title,
-                    DurationInDays = p.DurationInDays
-                })
-                .ToListAsync(cancellationToken);
-
+            await PopulateFormData(model, cancellationToken);
             return View(model);
+        }
+    }
+
+    private async Task PopulateFormData(AssignMembershipViewModel model, CancellationToken cancellationToken)
+    {
+        var formData = await mediator.Send(new GetMembershipFormDataQuery(model.MemberId), cancellationToken);
+        if (formData != null)
+        {
+            model.MemberName = formData.MemberName;
+            model.AvailablePlans = formData.AvailablePlans.Select(p => new PlanOption
+            {
+                Id = p.Id,
+                Title = p.Title,
+                DurationInDays = p.DurationInDays
+            }).ToList();
         }
     }
 }
