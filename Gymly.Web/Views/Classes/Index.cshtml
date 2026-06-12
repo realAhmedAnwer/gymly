@@ -4,17 +4,17 @@
     ViewData["Title"] = "Class Management";
 }
 
-<h2>Available Fitness Classes (@Model.TotalClasses)</h2>
+<h2>Class Management (@Model.TotalCount)</h2>
 
 <p>
-    <a asp-action="Create">Create New Class Type</a>
+    <a asp-action="Create">Create New Class</a>
 </p>
 
 <table border="1" cellpadding="5">
     <thead>
         <tr>
             <th>ID</th>
-            <th>Class Name</th>
+            <th>Name</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -22,18 +22,18 @@
         @if (!Model.Classes.Any())
         {
             <tr>
-                <td colspan="3">No fitness classes registered yet.</td>
+                <td colspan="3">No classes registered in the system.</td>
             </tr>
         }
         else
         {
-            foreach (var item in Model.Classes)
+            foreach (var fitnessClass in Model.Classes)
             {
                 <tr>
-                    <td>@item.Id</td>
-                    <td><strong>@item.Name</strong></td>
+                    <td>@fitnessClass.Id</td>
+                    <td>@fitnessClass.Name</td>
                     <td>
-                        <form asp-action="Delete" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Are you sure you want to remove this class type?');" style="display:inline;">
+                        <form asp-action="Delete" asp-route-id="@fitnessClass.Id" method="post" onsubmit="return confirm('Are you sure you want to delete this class?');" style="display:inline;">
                             <button type="submit">Delete</button>
                         </form>
                     </td>
@@ -42,3 +42,17 @@
         }
     </tbody>
 </table>
+
+@if (Model.TotalPages > 1)
+{
+    <nav>
+        <ul class="pagination">
+            @for (var i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}

@@ -4,7 +4,7 @@
     ViewData["Title"] = "Trainer Management";
 }
 
-<h2>Active Onboarded Trainers (@Model.TotalTrainers)</h2>
+<h2>Active Onboarded Trainers (@Model.TotalCount)</h2>
 
 <p>
     <a asp-action="Create">Onboard New Trainer</a>
@@ -50,3 +50,17 @@
         }
     </tbody>
 </table>
+
+@if (Model.TotalPages > 1)
+{
+    <nav>
+        <ul class="pagination">
+            @for (var i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}

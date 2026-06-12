@@ -10,10 +10,19 @@ namespace Gymly.Web.Controllers;
 public class ClassesController(ISender mediator) : Controller
 {
     [HttpGet]
-    public async Task<IActionResult> Index(CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(int? page, CancellationToken cancellationToken)
     {
-        var classes = await mediator.Send(new GetClassesQuery(), cancellationToken);
-        return View(new ClassesIndexViewModel { Classes = classes });
+        var pageNumber = page ?? 1;
+        var result = await mediator.Send(new GetClassesQuery(pageNumber, 10), cancellationToken);
+
+        return View(new ClassesIndexViewModel
+        {
+            Classes = result.Classes,
+            CurrentPage = result.PageNumber,
+            TotalPages = result.TotalPages,
+            TotalCount = result.TotalCount,
+            PageSize = result.PageSize
+        });
     }
 
     [HttpGet]

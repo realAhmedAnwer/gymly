@@ -5,5 +5,8 @@ namespace Gymly.Web.Models.Trainers;
 public class TrainersIndexViewModel
 {
     public List<TrainerDto> Trainers { get; set; } = [];
-    public int TotalTrainers => Trainers.Count;
+    public int CurrentPage { get; set; } = 1;
+    public int TotalPages { get; set; } = 1;
+    public int TotalCount { get; set; }
+    public int PageSize { get; set; } = 10;
 }

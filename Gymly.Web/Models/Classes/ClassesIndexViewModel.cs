@@ -4,6 +4,9 @@ namespace Gymly.Web.Models.Classes;
 
 public class ClassesIndexViewModel
 {
-    public IEnumerable<ClassLookupDto> Classes { get; set; } = [];
-    public int TotalClasses => Classes.Count();
+    public List<ClassLookupDto> Classes { get; set; } = [];
+    public int CurrentPage { get; set; } = 1;
+    public int TotalPages { get; set; } = 1;
+    public int TotalCount { get; set; }
+    public int PageSize { get; set; } = 10;
 }

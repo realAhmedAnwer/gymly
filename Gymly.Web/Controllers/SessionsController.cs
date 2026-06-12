@@ -12,21 +12,30 @@ namespace Gymly.Web.Controllers;
 public class SessionsController(ISender mediator) : Controller
 {
     [HttpGet]
-    public async Task<IActionResult> Index(CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(int? page, CancellationToken cancellationToken)
     {
-        var sessionDtos = await mediator.Send(new GetSessionsListQuery(), cancellationToken);
-        return View(new SessionsDashboardViewModel { Sessions = sessionDtos });
+        var pageNumber = page ?? 1;
+        var result = await mediator.Send(new GetSessionsListQuery(pageNumber, 10), cancellationToken);
+
+        return View(new SessionsDashboardViewModel
+        {
+            Sessions = result.Sessions,
+            CurrentPage = result.PageNumber,
+            TotalPages = result.TotalPages,
+            TotalCount = result.TotalCount,
+            PageSize = result.PageSize
+        });
     }
 
     [HttpGet]
     public async Task<IActionResult> Create(CancellationToken cancellationToken)
     {
-        var classes = await mediator.Send(new GetClassesQuery(), cancellationToken);
+        var classesResult = await mediator.Send(new GetClassesQuery(), cancellationToken);
         var trainers = await mediator.Send(new GetTrainersQuery(), cancellationToken);
 
         var viewModel = new CreateSessionViewModel
         {
-            AvailableClasses = classes.Select(c => new SelectListItem(c.Name, c.Id.ToString())).ToList(),
+            AvailableClasses = classesResult.Classes.Select(c => new SelectListItem(c.Name, c.Id.ToString())).ToList(),
             AvailableTrainers = trainers.Select(t => new SelectListItem(t.Name, t.Id.ToString())).ToList()
         };
 
@@ -39,10 +48,10 @@ public class SessionsController(ISender mediator) : Controller
     {
         if (!ModelState.IsValid)
         {
-            var classes = await mediator.Send(new GetClassesQuery(), cancellationToken);
+            var classesResult = await mediator.Send(new GetClassesQuery(), cancellationToken);
             var trainers = await mediator.Send(new GetTrainersQuery(), cancellationToken);
 
-            model.AvailableClasses = classes.Select(c => new SelectListItem(c.Name, c.Id.ToString())).ToList();
+            model.AvailableClasses = classesResult.Classes.Select(c => new SelectListItem(c.Name, c.Id.ToString())).ToList();
             model.AvailableTrainers = trainers.Select(t => new SelectListItem(t.Name, t.Id.ToString())).ToList();
 
             return View(model);
@@ -60,10 +69,10 @@ public class SessionsController(ISender mediator) : Controller
         {
             ModelState.AddModelError(string.Empty, ex.Message);
 
-            var classes = await mediator.Send(new GetClassesQuery(), cancellationToken);
+            var classesResult = await mediator.Send(new GetClassesQuery(), cancellationToken);
             var trainers = await mediator.Send(new GetTrainersQuery(), cancellationToken);
 
-            model.AvailableClasses = classes.Select(c => new SelectListItem(c.Name, c.Id.ToString())).ToList();
+            model.AvailableClasses = classesResult.Classes.Select(c => new SelectListItem(c.Name, c.Id.ToString())).ToList();
             model.AvailableTrainers = trainers.Select(t => new SelectListItem(t.Name, t.Id.ToString())).ToList();
 
             return View(model);

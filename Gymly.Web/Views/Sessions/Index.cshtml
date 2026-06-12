@@ -4,7 +4,7 @@
     ViewData["Title"] = "Sessions Dashboard";
 }
 
-<h2>Active Scheduled Sessions (@Model.TotalActiveSessions)</h2>
+<h2>Scheduled Sessions (@Model.TotalCount)</h2>
 
 <p>
     <a asp-action="Create">Schedule New Session</a>
@@ -57,3 +57,17 @@
         }
     </tbody>
 </table>
+
+@if (Model.TotalPages > 1)
+{
+    <nav>
+        <ul class="pagination">
+            @for (var i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}

@@ -5,5 +5,8 @@ namespace Gymly.Web.Models.Sessions;
 public class SessionsDashboardViewModel
 {
     public List<SessionDto> Sessions { get; set; } = [];
-    public int TotalActiveSessions => Sessions.Count;
+    public int CurrentPage { get; set; } = 1;
+    public int TotalPages { get; set; } = 1;
+    public int TotalCount { get; set; }
+    public int PageSize { get; set; } = 10;
 }
