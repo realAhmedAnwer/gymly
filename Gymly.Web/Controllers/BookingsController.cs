@@ -43,11 +43,6 @@ public class BookingsController(ISender mediator) : Controller
                 Display = s.Display,
                 BookedCount = s.BookedCount,
                 MaxCapacity = s.MaxCapacity
-            }).ToList(),
-            AvailableMembers = formData.AvailableMembers.Select(m => new MemberOption
-            {
-                Id = m.Id,
-                Name = m.Name
             }).ToList()
         };
 
@@ -97,12 +92,6 @@ public class BookingsController(ISender mediator) : Controller
             Display = s.Display,
             BookedCount = s.BookedCount,
             MaxCapacity = s.MaxCapacity
-        }).ToList();
-
-        model.AvailableMembers = formData.AvailableMembers.Select(m => new MemberOption
-        {
-            Id = m.Id,
-            Name = m.Name
         }).ToList();
     }
 }

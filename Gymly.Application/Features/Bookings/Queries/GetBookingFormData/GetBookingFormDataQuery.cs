@@ -25,20 +25,9 @@ public class GetBookingFormDataQueryHandler(IApplicationDbContext context)
             })
             .ToListAsync(cancellationToken);
 
-        var members = await context.Members
-            .Where(m => m.IsActive)
-            .OrderBy(m => m.Name)
-            .Select(m => new MemberOptionDto
-            {
-                Id = m.Id,
-                Name = m.Name
-            })
-            .ToListAsync(cancellationToken);
-
         return new BookingFormDataDto
         {
-            AvailableSessions = sessions,
-            AvailableMembers = members
+            AvailableSessions = sessions
         };
     }
 }

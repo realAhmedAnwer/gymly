@@ -150,4 +150,14 @@ public class MembersController(ISender mediator, IQrCodeService qrCodeService) :
         TempData["SuccessMessage"] = "Member activated.";
         return RedirectToAction(nameof(Index));
     }
+
+    [HttpGet]
+    public async Task<IActionResult> Search(string query, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(query) || query.Length < 2)
+            return Json(new List<object>());
+
+        var members = await mediator.Send(new GetMembersQuery(null, "name", query, 1, 20), cancellationToken);
+        return Json(members.Members.Select(m => new { id = m.Id, name = m.Name }));
+    }
 }

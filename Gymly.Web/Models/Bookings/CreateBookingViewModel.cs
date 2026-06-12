@@ -6,12 +6,12 @@ public class CreateBookingViewModel
 {
     [Required(ErrorMessage = "Please select a session.")]
     public int SessionId { get; set; }
-
+    
     [Required(ErrorMessage = "Please select a member.")]
     public int MemberId { get; set; }
-
+    
     public List<SessionOption> AvailableSessions { get; set; } = [];
-    public List<MemberOption> AvailableMembers { get; set; } = [];
+    public string MemberSearchTerm { get; set; } = string.Empty;
 }
 
 public class SessionOption
