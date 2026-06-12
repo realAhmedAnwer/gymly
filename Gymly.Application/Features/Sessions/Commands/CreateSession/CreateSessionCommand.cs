@@ -20,10 +20,17 @@ public class CreateSessionCommandHandler(IApplicationDbContext context) : IReque
             throw new ArgumentException("Session execution end time must fall after the starting mark.");
         }
 
-        var classExists = await context.Classes.AnyAsync(c => c.Id == request.ClassId, cancellationToken);
-        if (!classExists)
+        var fitnessClass = await context.Classes
+            .FirstOrDefaultAsync(c => c.Id == request.ClassId, cancellationToken);
+
+        if (fitnessClass == null)
         {
             throw new ArgumentException("The specified fitness class does not exist.");
+        }
+
+        if (fitnessClass.MaxCapacity <= 0)
+        {
+            throw new ArgumentException("Cannot schedule a session for a class with zero or negative capacity.");
         }
 
         var trainerExists = await context.Trainers.AnyAsync(t => t.Id == request.TrainerId, cancellationToken);
@@ -32,15 +39,26 @@ public class CreateSessionCommandHandler(IApplicationDbContext context) : IReque
             throw new ArgumentException("The specified trainer does not exist.");
         }
 
-        var hasOverlap = await context.Sessions.AnyAsync(
+        var hasTrainerOverlap = await context.Sessions.AnyAsync(
             s => s.TrainerId == request.TrainerId
               && s.StartTime < request.EndTime
               && s.EndTime > request.StartTime,
             cancellationToken);
 
-        if (hasOverlap)
+        if (hasTrainerOverlap)
         {
             throw new ArgumentException("The trainer has an overlapping session during the requested time slot.");
+        }
+
+        var classHasOverlap = await context.Sessions.AnyAsync(
+            s => s.ClassId == request.ClassId
+              && s.StartTime < request.EndTime
+              && s.EndTime > request.StartTime,
+            cancellationToken);
+
+        if (classHasOverlap)
+        {
+            throw new ArgumentException("The class already has a scheduled session during the requested time slot.");
         }
 
         var session = new Session
