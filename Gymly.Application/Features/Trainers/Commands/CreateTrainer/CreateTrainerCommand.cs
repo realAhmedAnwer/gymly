@@ -36,7 +36,15 @@ public class CreateTrainerCommandHandler(
         };
 
         context.Trainers.Add(trainer);
-        await context.SaveChangesAsync(cancellationToken);
+
+        try
+        {
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException)
+        {
+            throw new InvalidOperationException("A trainer with this email address already exists.");
+        }
 
         return trainer.Id;
     }

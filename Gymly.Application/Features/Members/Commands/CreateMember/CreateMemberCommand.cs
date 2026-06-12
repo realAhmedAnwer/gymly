@@ -35,7 +35,15 @@ public class CreateMemberCommandHandler(IApplicationDbContext context) : IReques
         };
 
         context.Members.Add(member);
-        await context.SaveChangesAsync(cancellationToken);
+
+        try
+        {
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException)
+        {
+            throw new InvalidOperationException("A member with this email address already exists.");
+        }
 
         return member.Id;
     }

@@ -31,7 +31,14 @@ public class UpdateMemberCommandHandler(IApplicationDbContext context) : IReques
         member.Email = normalizedEmail;
         member.Phone = request.Phone;
 
-        await context.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException)
+        {
+            throw new InvalidOperationException("Another member with this email address already exists.");
+        }
 
         return true;
     }

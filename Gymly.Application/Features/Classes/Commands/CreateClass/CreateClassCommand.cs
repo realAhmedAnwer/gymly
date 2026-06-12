@@ -32,7 +32,15 @@ public class CreateClassCommandHandler(IApplicationDbContext context) : IRequest
         };
 
         await context.Classes.AddAsync(fitnessClass, cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
+
+        try
+        {
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException)
+        {
+            throw new InvalidOperationException("A class with this name already exists.");
+        }
 
         return fitnessClass.Id;
     }

@@ -31,7 +31,14 @@ public class UpdatePlanCommandHandler(IApplicationDbContext context) : IRequestH
         plan.Price = request.Price;
         plan.DurationInDays = request.DurationInDays;
 
-        await context.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await context.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException)
+        {
+            throw new InvalidOperationException("Another plan with this title already exists.");
+        }
 
         return true;
     }
