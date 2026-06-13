@@ -1,11 +1,13 @@
 using Gymly.Application.Features.Home.Queries.GetDashboardStats;
 using Gymly.Web.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace Gymly.Web.Controllers;
 
+[Authorize]
 public class HomeController(ISender mediator) : Controller
 {
     public async Task<IActionResult> Index(CancellationToken cancellationToken)
@@ -32,6 +34,7 @@ public class HomeController(ISender mediator) : Controller
         return View();
     }
 
+    [AllowAnonymous]
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

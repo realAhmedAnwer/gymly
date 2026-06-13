@@ -4,11 +4,13 @@ using Gymly.Application.Features.Sessions.Queries.GetSessionsList;
 using Gymly.Application.Features.Trainers.Queries.GetTrainersLookup;
 using Gymly.Web.Models.Sessions;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Gymly.Web.Controllers;
 
+[Authorize]
 public class SessionsController(ISender mediator) : Controller
 {
     [HttpGet]

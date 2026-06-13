@@ -1,13 +1,14 @@
-﻿using Gymly.Domain.Entities;
-using Gymly.Domain.Entities.Users;
+﻿using Gymly.Application.Interfaces;
+using Gymly.Application.Interfaces.Common;
+using Gymly.Domain.Entities;
 using Gymly.Domain.Entities.Memberships;
 using Gymly.Domain.Entities.Schedules;
-using Gymly.Application.Interfaces;
+using Gymly.Domain.Entities.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gymly.Infrastructure;
 
-public class GymlyDbContext(DbContextOptions<GymlyDbContext> options) : DbContext(options), IApplicationDbContext
+public class GymlyDbContext(DbContextOptions<GymlyDbContext> options, ICurrentUserService currentUserService) : DbContext(options), IApplicationDbContext
 {
     public DbSet<User> Users => Set<User>();
     public DbSet<Member> Members => Set<Member>();
@@ -66,26 +67,28 @@ public class GymlyDbContext(DbContextOptions<GymlyDbContext> options) : DbContex
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
+        var currentUser = currentUserService.Username ?? "System";
+
         foreach (var entry in ChangeTracker.Entries<BaseEntity>())
         {
             switch (entry.State)
             {
                 case EntityState.Added:
                     entry.Entity.CreatedAt = DateTime.UtcNow;
-                    entry.Entity.CreatedBy = "System"; // TODO: Swap with actual HTTP User context service later
+                    entry.Entity.CreatedBy = currentUser;
                     entry.Entity.IsDeleted = false;
                     break;
 
                 case EntityState.Modified:
                     entry.Entity.UpdatedAt = DateTime.UtcNow;
-                    entry.Entity.UpdatedBy = "System"; // TODO: Swap with actual HTTP User context service later
+                    entry.Entity.UpdatedBy = currentUser;
                     break;
 
                 case EntityState.Deleted:
                     entry.State = EntityState.Modified;
                     entry.Entity.IsDeleted = true;
                     entry.Entity.UpdatedAt = DateTime.UtcNow;
-                    entry.Entity.UpdatedBy = "System"; // TODO: Swap with actual HTTP User context service later
+                    entry.Entity.UpdatedBy = currentUser;
                     break;
             }
         }

@@ -4,10 +4,12 @@ using Gymly.Application.Features.Bookings.Queries.GetBookings;
 using Gymly.Application.Features.Bookings.Queries.GetBookingFormData;
 using Gymly.Web.Models.Bookings;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Gymly.Web.Controllers;
 
+[Authorize]
 public class BookingsController(ISender mediator) : Controller
 {
     [HttpGet]

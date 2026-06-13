@@ -5,10 +5,12 @@ using Gymly.Application.Interfaces;
 using Gymly.Domain.Enums;
 using Gymly.Web.Models.Attendance;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Gymly.Web.Controllers;
 
+[Authorize]
 public class AttendanceController(ISender mediator) : Controller
 {
     [HttpGet]

@@ -3,10 +3,12 @@ using Gymly.Application.Features.Trainers.Commands.DeleteTrainer;
 using Gymly.Application.Features.Trainers.Queries.GetAllTrainers;
 using Gymly.Web.Models.Trainers;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Gymly.Web.Controllers;
 
+[Authorize]
 public class TrainersController(IMediator mediator) : Controller
 {
     [HttpGet]

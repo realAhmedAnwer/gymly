@@ -21,6 +21,7 @@ public static class DependencyInjection
 
         services.AddHttpContextAccessor();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
+        services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IQrCodeService, QrCodeService>();
 
         return services;

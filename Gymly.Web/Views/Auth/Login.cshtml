@@ -1,0 +1,42 @@
+@model Gymly.Web.Models.Auth.LoginViewModel
+
+@{
+    ViewData["Title"] = "Sign In";
+}
+
+<div style="max-width: 400px; margin: 60px auto; padding: 30px; border: 1px solid #ddd; border-radius: 8px; background-color: #fff;">
+    <h2 style="text-align: center; margin-bottom: 24px; color: #333;">Gymly Sign In</h2>
+
+    <form asp-action="Login" method="post" novalidate>
+        <input type="hidden" asp-for="ReturnUrl" />
+
+        <div asp-validation-summary="ModelOnly" style="color: #dc3545; margin-bottom: 16px;"></div>
+
+        <div style="margin-bottom: 16px;">
+            <label asp-for="Username" style="display: block; margin-bottom: 4px; font-weight: 500;"></label>
+            <input asp-for="Username" style="width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
+            <span asp-validation-for="Username" style="color: #dc3545; font-size: 0.875em;"></span>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+            <label asp-for="Password" style="display: block; margin-bottom: 4px; font-weight: 500;"></label>
+            <input asp-for="Password" style="width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
+            <span asp-validation-for="Password" style="color: #dc3545; font-size: 0.875em;"></span>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label>
+                <input asp-for="RememberMe" />
+                @Html.DisplayNameFor(m => m.RememberMe)
+            </label>
+        </div>
+
+        <button type="submit" style="width: 100%; padding: 10px; background-color: #007bff; color: #fff; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer;">
+            Sign In
+        </button>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

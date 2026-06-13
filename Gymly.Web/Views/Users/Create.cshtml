@@ -1,0 +1,58 @@
+@model Gymly.Web.Models.Users.CreateUserViewModel
+
+@{
+    ViewData["Title"] = "Create User";
+}
+
+<h2>Create System User</h2>
+
+<div style="max-width: 500px; margin-top: 20px;">
+    <form asp-action="Create" method="post" novalidate>
+        <div asp-validation-summary="ModelOnly" style="color: #dc3545; margin-bottom: 16px;"></div>
+
+        <div style="margin-bottom: 16px;">
+            <label asp-for="Username" style="display: block; margin-bottom: 4px; font-weight: 500;"></label>
+            <input asp-for="Username" style="width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
+            <span asp-validation-for="Username" style="color: #dc3545; font-size: 0.875em;"></span>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+            <label asp-for="FullName" style="display: block; margin-bottom: 4px; font-weight: 500;"></label>
+            <input asp-for="FullName" style="width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
+            <span asp-validation-for="FullName" style="color: #dc3545; font-size: 0.875em;"></span>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+            <label asp-for="Email" style="display: block; margin-bottom: 4px; font-weight: 500;"></label>
+            <input asp-for="Email" style="width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
+            <span asp-validation-for="Email" style="color: #dc3545; font-size: 0.875em;"></span>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+            <label asp-for="Password" style="display: block; margin-bottom: 4px; font-weight: 500;"></label>
+            <input asp-for="Password" style="width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
+            <span asp-validation-for="Password" style="color: #dc3545; font-size: 0.875em;"></span>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+            <label asp-for="SystemRoleId" style="display: block; margin-bottom: 4px; font-weight: 500;"></label>
+            <select asp-for="SystemRoleId" style="width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+                <option value="">-- Select Role --</option>
+                @foreach (var role in Model.AvailableRoles)
+                {
+                    <option value="@role.Id">@role.Name</option>
+                }
+            </select>
+            <span asp-validation-for="SystemRoleId" style="color: #dc3545; font-size: 0.875em;"></span>
+        </div>
+
+        <button type="submit" style="padding: 10px 24px; background-color: #007bff; color: #fff; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer;">
+            Create User
+        </button>
+        <a asp-action="Index" style="margin-left: 10px; color: #007bff; text-decoration: none;">Cancel</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

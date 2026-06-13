@@ -2,10 +2,12 @@ using Gymly.Application.Features.Memberships.Commands.AssignMemberToPlan;
 using Gymly.Application.Features.Memberships.Queries.GetMembershipFormData;
 using Gymly.Web.Models.Memberships;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Gymly.Web.Controllers;
 
+[Authorize]
 public class MembershipsController(ISender mediator) : Controller
 {
     [HttpGet]

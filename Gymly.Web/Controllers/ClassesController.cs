@@ -3,10 +3,12 @@ using Gymly.Application.Features.Classes.Commands.DeleteClass;
 using Gymly.Application.Features.Classes.Queries.GetClassesLookup;
 using Gymly.Web.Models.Classes;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Gymly.Web.Controllers;
 
+[Authorize]
 public class ClassesController(ISender mediator) : Controller
 {
     [HttpGet]

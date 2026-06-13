@@ -1,0 +1,48 @@
+@model Gymly.Web.Models.Users.ProfileViewModel
+
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<h2>My Profile</h2>
+
+<div style="max-width: 500px; margin-top: 20px;">
+    <form asp-action="Profile" method="post" novalidate>
+        <div asp-validation-summary="ModelOnly" style="color: #dc3545; margin-bottom: 16px;"></div>
+
+        <div style="margin-bottom: 16px;">
+            <label style="display: block; margin-bottom: 4px; font-weight: 500;">Username</label>
+            <input value="@Model.Username" disabled style="width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; background-color: #f5f5f5;" />
+        </div>
+
+        <div style="margin-bottom: 16px;">
+            <label style="display: block; margin-bottom: 4px; font-weight: 500;">Role</label>
+            <input value="@Model.RoleName" disabled style="width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; background-color: #f5f5f5;" />
+        </div>
+
+        <div style="margin-bottom: 16px;">
+            <label style="display: block; margin-bottom: 4px; font-weight: 500;">Status</label>
+            <input value="@(Model.IsActive ? "Active" : "Inactive")" disabled style="width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; background-color: #f5f5f5;" />
+        </div>
+
+        <div style="margin-bottom: 16px;">
+            <label asp-for="FullName" style="display: block; margin-bottom: 4px; font-weight: 500;"></label>
+            <input asp-for="FullName" style="width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
+            <span asp-validation-for="FullName" style="color: #dc3545; font-size: 0.875em;"></span>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+            <label asp-for="Email" style="display: block; margin-bottom: 4px; font-weight: 500;"></label>
+            <input asp-for="Email" style="width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
+            <span asp-validation-for="Email" style="color: #dc3545; font-size: 0.875em;"></span>
+        </div>
+
+        <button type="submit" style="padding: 10px 24px; background-color: #007bff; color: #fff; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer;">
+            Update Profile
+        </button>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -9,9 +9,12 @@ using Gymly.Application.Features.Members.Queries.GetMembers;
 using Gymly.Application.Interfaces.Common;
 using Gymly.Web.Models.Members;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Gymly.Web.Controllers;
+
+[Authorize]
 
 public class MembersController(ISender mediator, IQrCodeService qrCodeService) : Controller
 {

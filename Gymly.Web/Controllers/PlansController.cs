@@ -4,14 +4,16 @@ using Gymly.Application.Features.Plans.Commands.CreatePlan;
 using Gymly.Application.Features.Plans.Commands.DeletePlan;
 using Gymly.Application.Features.Plans.Commands.RemovePlanAccessRule;
 using Gymly.Application.Features.Plans.Commands.UpdatePlan;
-using Gymly.Application.Features.Plans.Queries.GetPlanWithRules;
 using Gymly.Application.Features.Plans.Queries.GetPlans;
+using Gymly.Application.Features.Plans.Queries.GetPlanWithRules;
 using Gymly.Web.Models.Plans;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Gymly.Web.Controllers;
 
+[Authorize]
 public class PlansController(ISender mediator) : Controller
 {
     [HttpGet]
