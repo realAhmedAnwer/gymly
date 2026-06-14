@@ -12,8 +12,4 @@ public class Membership : BaseEntity
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public MembershipStatus Status { get; set; } = MembershipStatus.Active;
-    public bool IsCurrentlyValid()
-    {
-        return Status == MembershipStatus.Active && DateTime.UtcNow <= EndDate;
-    }
 }

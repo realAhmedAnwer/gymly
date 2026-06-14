@@ -26,7 +26,7 @@ public class GetMemberMembershipQueryHandler(IApplicationDbContext context)
                 m.StartDate,
                 m.EndDate,
                 m.Status.ToString(),
-                m.Status == MembershipStatus.Active && DateTime.UtcNow <= m.EndDate
+                m.Status == MembershipStatus.Active && DateTime.UtcNow >= m.StartDate && DateTime.UtcNow <= m.EndDate
             ))
             .FirstOrDefaultAsync(cancellationToken);
 
