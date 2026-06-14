@@ -14,10 +14,10 @@ namespace Gymly.Web.Controllers;
 public class SessionsController(ISender mediator) : Controller
 {
     [HttpGet]
-    public async Task<IActionResult> Index(int? page, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(string? sortBy, string? searchTerm, DateTime? dateFrom, DateTime? dateTo, int? page, CancellationToken cancellationToken)
     {
         var pageNumber = page ?? 1;
-        var result = await mediator.Send(new GetSessionsListQuery(pageNumber, 10), cancellationToken);
+        var result = await mediator.Send(new GetSessionsListQuery(sortBy, searchTerm, dateFrom, dateTo, pageNumber, 10), cancellationToken);
 
         return View(new SessionsDashboardViewModel
         {
@@ -25,7 +25,11 @@ public class SessionsController(ISender mediator) : Controller
             CurrentPage = result.PageNumber,
             TotalPages = result.TotalPages,
             TotalCount = result.TotalCount,
-            PageSize = result.PageSize
+            PageSize = result.PageSize,
+            SortBy = sortBy,
+            SearchTerm = searchTerm,
+            DateFrom = dateFrom,
+            DateTo = dateTo
         });
     }
 

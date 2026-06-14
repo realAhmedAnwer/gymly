@@ -9,4 +9,8 @@ public class SessionsDashboardViewModel
     public int TotalPages { get; set; } = 1;
     public int TotalCount { get; set; }
     public int PageSize { get; set; } = 10;
+    public string? SortBy { get; set; }
+    public string? SearchTerm { get; set; }
+    public DateTime? DateFrom { get; set; }
+    public DateTime? DateTo { get; set; }
 }
