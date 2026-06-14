@@ -1,31 +1,160 @@
-html {
-  font-size: 14px;
+/* Gymly Design System */
+:root {
+    --gymly-primary: #6C3CE1;
+    --gymly-primary-light: #8B5CF6;
+    --gymly-primary-dark: #5B21B6;
+    --gymly-secondary: #00E676;
+    --gymly-secondary-light: #69F0AE;
+    --gymly-accent: #FF6B35;
+    --gymly-dark: #0F172A;
+    --gymly-dark-lighter: #1E293B;
+    --gymly-dark-border: #334155;
+    --gymly-light: #F8FAFC;
+    --gymly-light-card: #FFFFFF;
+    --gymly-light-border: #E2E8F0;
+    --gymly-text: #0F172A;
+    --gymly-text-secondary: #64748B;
+    --gymly-text-light: #94A3B8;
+    --gymly-text-on-dark: #F1F5F9;
+    --gymly-text-on-dark-secondary: #94A3B8;
+    --gymly-success: #10B981;
+    --gymly-danger: #EF4444;
+    --gymly-warning: #F59E0B;
+    --sidebar-width: 260px;
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{font-size:14px;scroll-behavior:smooth}
+@media(min-width:768px){html{font-size:16px}}
+body{font-family:var(--font-family);background:var(--gymly-light);color:var(--gymly-text);min-height:100vh;overflow-x:hidden}
+
+/* Sidebar */
+.sidebar{position:fixed;top:0;left:0;width:var(--sidebar-width);height:100vh;background:var(--gymly-dark);color:var(--gymly-text-on-dark);z-index:40;transition:transform .3s ease;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-track{background:transparent}
+.sidebar::-webkit-scrollbar-thumb{background:var(--gymly-dark-border);border-radius:2px}
+.sidebar-brand{padding:20px 20px 16px;border-bottom:1px solid var(--gymly-dark-border);display:flex;align-items:center;gap:12px;flex-shrink:0}
+.sidebar-brand-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--gymly-primary),var(--gymly-secondary));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:white;flex-shrink:0}
+.sidebar-brand-text{font-size:1.25rem;font-weight:700;letter-spacing:-0.025em;background:linear-gradient(135deg,var(--gymly-primary-light),var(--gymly-secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sidebar-nav{flex:1;padding:12px 0}
+.sidebar-section{margin-bottom:4px}
+.sidebar-section-title{padding:8px 20px 4px;font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--gymly-text-on-dark-secondary)}
+.sidebar-link{display:flex;align-items:center;gap:12px;padding:9px 20px;color:var(--gymly-text-on-dark-secondary);text-decoration:none;font-size:.875rem;font-weight:500;transition:all .15s ease;border-left:3px solid transparent;cursor:pointer}
+.sidebar-link:hover{color:var(--gymly-text-on-dark);background:rgba(255,255,255,.05)}
+.sidebar-link.active{color:var(--gymly-primary-light);background:rgba(108,60,225,.1);border-left-color:var(--gymly-primary-light)}
+.sidebar-link-icon{width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem}
+.sidebar-submenu{overflow:hidden;max-height:0;transition:max-height .3s ease}
+.sidebar-submenu.open{max-height:500px}
+.sidebar-submenu .sidebar-link{padding-left:52px;font-size:.8125rem;font-weight:400}
+.sidebar-submenu .sidebar-link.active{color:var(--gymly-secondary);border-left-color:var(--gymly-secondary)}
+.sidebar-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;padding:9px 20px;color:var(--gymly-text-on-dark-secondary);text-decoration:none;font-size:.875rem;font-weight:500;transition:all .15s ease;border-left:3px solid transparent;cursor:pointer;background:none;border-right:none;border-top:none;border-bottom:none;text-align:left}
+.sidebar-toggle:hover{color:var(--gymly-text-on-dark);background:rgba(255,255,255,.05)}
+.sidebar-toggle .sidebar-link-icon{width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem}
+.sidebar-toggle .chevron{transition:transform .2s ease;font-size:.75rem}
+.sidebar-toggle.open .chevron{transform:rotate(90deg)}
+.sidebar-footer{padding:16px 20px;border-top:1px solid var(--gymly-dark-border);flex-shrink:0}
+.sidebar-user{display:flex;align-items:center;gap:10px}
+.sidebar-user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gymly-primary),var(--gymly-accent));display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:white;flex-shrink:0}
+.sidebar-user-info{flex:1;min-width:0}
+.sidebar-user-name{font-size:.8125rem;font-weight:600;color:var(--gymly-text-on-dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sidebar-user-role{font-size:.6875rem;color:var(--gymly-text-on-dark-secondary)}
+
+/* Main Content */
+.main-content{margin-left:var(--sidebar-width);min-height:100vh;transition:margin-left .3s ease}
+.topbar{position:sticky;top:0;z-index:30;background:rgba(255,255,255,.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--gymly-light-border);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.topbar-title{font-size:1.125rem;font-weight:700;color:var(--gymly-text)}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.mobile-menu-btn{display:none;background:none;border:none;color:var(--gymly-text);font-size:1.5rem;cursor:pointer;padding:4px}
+.sidebar-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:35}
+.page-content{padding:24px}
+
+/* Cards */
+.gymly-card{background:var(--gymly-light-card);border:1px solid var(--gymly-light-border);border-radius:12px;padding:20px;transition:box-shadow .2s ease}
+.gymly-card:hover{box-shadow:0 4px 12px rgba(0,0,0,.05)}
+.stat-card{background:var(--gymly-light-card);border:1px solid var(--gymly-light-border);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:8px;transition:all .2s ease}
+.stat-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.08)}
+.stat-card-value{font-size:2rem;font-weight:800;line-height:1;letter-spacing:-.025em}
+.stat-card-label{font-size:.8125rem;font-weight:500;color:var(--gymly-text-secondary)}
+.stat-card-sub{font-size:.75rem;color:var(--gymly-text-light)}
+
+/* Tables */
+.gymly-table{width:100%;border-collapse:separate;border-spacing:0;font-size:.875rem}
+.gymly-table thead th{background:var(--gymly-light);color:var(--gymly-text-secondary);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;padding:12px 16px;text-align:left;border-bottom:2px solid var(--gymly-light-border);white-space:nowrap}
+.gymly-table tbody td{padding:12px 16px;border-bottom:1px solid var(--gymly-light-border);color:var(--gymly-text);vertical-align:middle}
+.gymly-table tbody tr:hover{background:rgba(108,60,225,.03)}
+
+/* Buttons */
+.gymly-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:9px 18px;border-radius:8px;font-size:.875rem;font-weight:600;cursor:pointer;transition:all .15s ease;border:none;text-decoration:none;line-height:1.4}
+.gymly-btn-primary{background:var(--gymly-primary);color:white}
+.gymly-btn-primary:hover{background:var(--gymly-primary-dark);color:white}
+.gymly-btn-secondary{background:var(--gymly-light);color:var(--gymly-text);border:1px solid var(--gymly-light-border)}
+.gymly-btn-secondary:hover{background:var(--gymly-light-border)}
+.gymly-btn-success{background:var(--gymly-success);color:white}
+.gymly-btn-success:hover{background:#059669;color:white}
+.gymly-btn-danger{background:var(--gymly-danger);color:white}
+.gymly-btn-danger:hover{background:#DC2626;color:white}
+.gymly-btn-sm{padding:5px 12px;font-size:.8125rem;border-radius:6px}
+.gymly-btn-ghost{background:transparent;color:var(--gymly-text-secondary);padding:5px 10px}
+.gymly-btn-ghost:hover{background:var(--gymly-light);color:var(--gymly-text)}
+
+/* Forms */
+.gymly-input{width:100%;padding:10px 14px;border:1px solid var(--gymly-light-border);border-radius:8px;font-size:.875rem;font-family:var(--font-family);color:var(--gymly-text);background:var(--gymly-light-card);transition:border-color .15s ease,box-shadow .15s ease}
+.gymly-input:focus{outline:none;border-color:var(--gymly-primary);box-shadow:0 0 0 3px rgba(108,60,225,.15)}
+.gymly-input::placeholder{color:var(--gymly-text-light)}
+.gymly-label{display:block;font-size:.8125rem;font-weight:600;color:var(--gymly-text);margin-bottom:6px}
+.gymly-select{width:100%;padding:10px 14px;border:1px solid var(--gymly-light-border);border-radius:8px;font-size:.875rem;font-family:var(--font-family);color:var(--gymly-text);background:var(--gymly-light-card);cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748B' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.gymly-select:focus{outline:none;border-color:var(--gymly-primary);box-shadow:0 0 0 3px rgba(108,60,225,.15)}
+.gymly-checkbox{width:16px;height:16px;accent-color:var(--gymly-primary);cursor:pointer}
+.gymly-textarea{width:100%;padding:10px 14px;border:1px solid var(--gymly-light-border);border-radius:8px;font-size:.875rem;font-family:var(--font-family);color:var(--gymly-text);background:var(--gymly-light-card);resize:vertical;min-height:80px}
+.gymly-textarea:focus{outline:none;border-color:var(--gymly-primary);box-shadow:0 0 0 3px rgba(108,60,225,.15)}
+
+/* Badges */
+.gymly-badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:.75rem;font-weight:600;line-height:1.4}
+.gymly-badge-success{background:rgba(16,185,129,.1);color:#059669}
+.gymly-badge-danger{background:rgba(239,68,68,.1);color:#DC2626}
+.gymly-badge-warning{background:rgba(245,158,11,.1);color:#D97706}
+.gymly-badge-info{background:rgba(59,130,246,.1);color:#2563EB}
+.gymly-badge-neutral{background:var(--gymly-light);color:var(--gymly-text-secondary)}
+
+/* Pagination */
+.gymly-pagination{display:flex;align-items:center;gap:4px;margin-top:16px}
+.gymly-page-btn{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;border-radius:8px;font-size:.875rem;font-weight:500;border:1px solid var(--gymly-light-border);background:var(--gymly-light-card);color:var(--gymly-text-secondary);cursor:pointer;transition:all .15s ease;text-decoration:none}
+.gymly-page-btn:hover{background:var(--gymly-light);border-color:var(--gymly-primary);color:var(--gymly-primary)}
+.gymly-page-btn.active{background:var(--gymly-primary);border-color:var(--gymly-primary);color:white}
+
+/* Alerts */
+.gymly-alert{padding:12px 16px;border-radius:8px;font-size:.875rem;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.gymly-alert-success{background:rgba(16,185,129,.1);color:#065F46;border:1px solid rgba(16,185,129,.2)}
+.gymly-alert-danger{background:rgba(239,68,68,.1);color:#991B1B;border:1px solid rgba(239,68,68,.2)}
+
+/* Validation */
+.field-validation-error,.validation-summary-errors{color:var(--gymly-danger);font-size:.8125rem;margin-top:4px}
+input[data-val-required].input-validation-error,
+input[data-val-regex].input-validation-error,
+select.input-validation-error,
+textarea.input-validation-error{border-color:var(--gymly-danger)}
+
+/* Capacity Colors */
+.capacity-green{color:var(--gymly-success);font-weight:600}
+.capacity-orange{color:var(--gymly-warning);font-weight:600}
+.capacity-red{color:var(--gymly-danger);font-weight:600}
+
+/* Mobile Responsive */
+@media(max-width:1023px){
+    .sidebar{transform:translateX(-100%)}
+    .sidebar.open{transform:translateX(0)}
+    .sidebar-overlay.open{display:block}
+    .main-content{margin-left:0}
+    .mobile-menu-btn{display:block}
+    .page-content{padding:16px}
+}
+@media(min-width:1024px){
+    .sidebar-overlay{display:none !important}
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
-body {
-  margin-bottom: 60px;
-}
-
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
-}
-
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+/* Print */
+@media print{
+    .sidebar,.topbar,.mobile-menu-btn{display:none !important}
+    .main-content{margin-left:0 !important}
 }

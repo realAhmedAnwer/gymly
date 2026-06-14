@@ -6,26 +6,34 @@
     var antiforgeryToken = Antiforgery.GetAndStoreTokens(Context).RequestToken;
 }
 
-<h2>Check-In</h2>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+    <div class="gymly-card">
+        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Scan QR Code</h3>
+        <form id="qrForm" asp-action="CheckInByQr" method="post">
+            @Html.AntiForgeryToken()
+            <div class="flex gap-3">
+                <input type="text" id="qrTokenInput" name="qrToken" placeholder="Scan or enter QR token" autofocus autocomplete="off" class="gymly-input flex-1" />
+                <button type="submit" class="gymly-btn gymly-btn-primary">Check In</button>
+            </div>
+        </form>
+    </div>
 
-<h3>Scan QR Code</h3>
-<form id="qrForm" asp-action="CheckInByQr" method="post" style="margin-bottom: 20px;">
-    @Html.AntiForgeryToken()
-    <input type="text" id="qrTokenInput" name="qrToken" placeholder="Scan or enter QR token" autofocus
-           autocomplete="off" style="width: 300px; padding: 5px;" />
-    <button type="submit" style="padding: 5px 15px;">Check In</button>
-</form>
-
-<h3>Manual Check-In</h3>
-<form id="manualForm" asp-action="ManualCheckIn" method="post" style="margin-bottom: 20px;">
-    @Html.AntiForgeryToken()
-    <input type="hidden" id="selectedMemberId" name="memberId" value="" />
-    <input type="text" id="memberSearch" name="searchTerm" placeholder="Search by name, email, or phone"
-           autocomplete="off" style="width: 300px; padding: 5px;" />
-    <button type="submit" id="manualSubmit" disabled style="padding: 5px 15px;">Check In</button>
-    <div id="selectedMemberDisplay" style="margin-top: 5px;"></div>
-    <ul id="searchResults" style="list-style: none; padding: 0; margin: 5px 0 0 0; max-width: 300px;"></ul>
-</form>
+    <div class="gymly-card">
+        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Manual Check-In</h3>
+        <form id="manualForm" asp-action="ManualCheckIn" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" id="selectedMemberId" name="memberId" value="" />
+            <div class="relative">
+                <input type="text" id="memberSearch" name="searchTerm" placeholder="Search by name, email, or phone" autocomplete="off" class="gymly-input" />
+                <div id="searchResults" class="absolute top-full left-0 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-50 hidden max-h-48 overflow-y-auto mt-1"></div>
+            </div>
+            <div id="selectedMemberDisplay" class="mt-2 text-sm"></div>
+            <div class="mt-3">
+                <button type="submit" id="manualSubmit" disabled class="gymly-btn gymly-btn-primary gymly-btn-sm">Check In</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 <script>
     window.gymlyAttendance = {
@@ -34,49 +42,51 @@
     };
 </script>
 
-<h3>Recent Check-Ins</h3>
+<div class="gymly-card">
+    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Recent Check-Ins</h3>
 
-@if (Model.RecentCheckIns.Any())
-{
-    <table border="1" cellpadding="5">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Member</th>
-                <th>Date/Time</th>
-                <th>Method</th>
-                <th>Result</th>
-                <th>Reason</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var checkin in Model.RecentCheckIns)
-            {
-                <tr>
-                    <td>@checkin.Id</td>
-                    <td>@checkin.MemberName</td>
-                    <td>@checkin.ScannedAt.ToString("yyyy-MM-dd HH:mm")</td>
-                    <td>@checkin.Method</td>
-                    <td>
-                        @if (checkin.WasGranted)
-                        {
-                            <span style="color: green;">Granted</span>
-                        }
-                        else
-                        {
-                            <span style="color: red;">Denied</span>
-                        }
-                    </td>
-                    <td>@(string.IsNullOrEmpty(checkin.RejectionReason) ? "-" : checkin.RejectionReason)</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-else
-{
-    <p><em>No check-in history found.</em></p>
-}
+    @if (Model.RecentCheckIns.Any())
+    {
+        <div class="overflow-x-auto">
+            <table class="gymly-table">
+                <thead>
+                    <tr>
+                        <th>Member</th>
+                        <th>Date/Time</th>
+                        <th>Method</th>
+                        <th>Result</th>
+                        <th>Reason</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var checkin in Model.RecentCheckIns)
+                    {
+                        <tr>
+                            <td class="font-medium">@checkin.MemberName</td>
+                            <td>@checkin.ScannedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td><span class="gymly-badge gymly-badge-neutral">@checkin.Method</span></td>
+                            <td>
+                                @if (checkin.WasGranted)
+                                {
+                                    <span class="gymly-badge gymly-badge-success">Granted</span>
+                                }
+                                else
+                                {
+                                    <span class="gymly-badge gymly-badge-danger">Denied</span>
+                                }
+                            </td>
+                            <td class="text-gray-500 text-sm">@(string.IsNullOrEmpty(checkin.RejectionReason) ? "-" : checkin.RejectionReason)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <p class="text-gray-400 text-sm py-4 text-center">No check-in history found.</p>
+    }
+</div>
 
 @section Scripts {
     <script src="~/js/attendance.js" asp-append-version="true"></script>

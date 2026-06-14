@@ -4,96 +4,97 @@
     ViewData["Title"] = "Create Booking";
 }
 
-<h2>Create New Booking</h2>
+<div class="max-w-xl">
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold text-gray-900">Create Booking</h2>
+        <a asp-action="Index" class="gymly-btn gymly-btn-secondary gymly-btn-sm">Back to List</a>
+    </div>
 
-<form asp-action="Create" method="post">
-    <div asp-validation-summary="All" style="color:red;"></div>
+    <div class="gymly-card">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="All" class="gymly-alert gymly-alert-danger mb-4"></div>
 
-    <p>
-        <label>Session:</label><br />
-        <select asp-for="SessionId">
-            <option value="">-- Select Session --</option>
-            @foreach (var session in Model.AvailableSessions)
-            {
-                <option value="@session.Id" disabled="@session.IsFull">
-                    @session.Display
-                    @(session.MaxCapacity > 0 ? ("(" + session.BookedCount + "/" + session.MaxCapacity + (session.IsFull ? " - FULL)" : ")")) : "")
-                </option>
-            }
-        </select>
-        @if (Model.AvailableSessions.Any(s => s.IsFull))
-        {
-            <br /><span style="color: #888; font-size: 0.85em;">Full sessions are disabled.</span>
-        }
-    </p>
+            <div class="mb-4">
+                <label class="gymly-label">Session</label>
+                <select asp-for="SessionId" class="gymly-select">
+                    <option value="">-- Select Session --</option>
+                    @foreach (var session in Model.AvailableSessions)
+                    {
+                        <option value="@session.Id" disabled="@session.IsFull">
+                            @session.Display
+                            @(session.MaxCapacity > 0 ? ("(" + session.BookedCount + "/" + session.MaxCapacity + (session.IsFull ? " - FULL)" : ")")) : "")
+                        </option>
+                    }
+                </select>
+                @if (Model.AvailableSessions.Any(s => s.IsFull))
+                {
+                    <p class="text-xs text-gray-400 mt-1">Full sessions are disabled.</p>
+                }
+            </div>
 
-    <p>
-        <label>Member:</label><br />
-        <div style="position: relative; width: 300px;">
-            <input type="text" id="memberSearch" placeholder="Search member name..." autocomplete="off" style="width: 100%;" />
-            <div id="searchResults" style="position: absolute; top: 100%; left: 0; width: 100%; background: white; border: 1px solid #ccc; z-index: 1000; display: none; max-height: 200px; overflow-y: auto;"></div>
-            <input type="hidden" asp-for="MemberId" id="selectedMemberId" />
-            <div id="selectedMemberName" style="margin-top: 5px; font-weight: bold; color: #333;"></div>
-        </div>
-    </p>
+            <div class="mb-6">
+                <label class="gymly-label">Member</label>
+                <div class="relative">
+                    <input type="text" id="memberSearch" placeholder="Search member name..." autocomplete="off" class="gymly-input" />
+                    <div id="searchResults" class="absolute top-full left-0 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-50 hidden max-h-48 overflow-y-auto mt-1"></div>
+                    <input type="hidden" asp-for="MemberId" id="selectedMemberId" />
+                    <div id="selectedMemberName" class="mt-2 text-sm font-medium text-gray-700"></div>
+                </div>
+            </div>
 
-    <p>
-        <button type="submit">Book</button>
-        <a asp-action="Index">Cancel</a>
-    </p>
-</form>
+            <div class="flex items-center gap-3">
+                <button type="submit" class="gymly-btn gymly-btn-primary">Book</button>
+                <a asp-action="Index" class="gymly-btn gymly-btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        const searchInput = document.getElementById('memberSearch');
-        const resultsDiv = document.getElementById('searchResults');
-        const memberIdInput = document.getElementById('selectedMemberId');
-        const memberNameDiv = document.getElementById('selectedMemberName');
-        let abortController = null;
+        var searchInput = document.getElementById('memberSearch');
+        var resultsDiv = document.getElementById('searchResults');
+        var memberIdInput = document.getElementById('selectedMemberId');
+        var memberNameDiv = document.getElementById('selectedMemberName');
+        var abortController = null;
 
-        searchInput.addEventListener('input', async () => {
-            const query = searchInput.value.trim();
+        searchInput.addEventListener('input', function() {
+            var query = searchInput.value.trim();
             if (query.length < 2) {
                 resultsDiv.style.display = 'none';
                 return;
             }
-
             if (abortController) abortController.abort();
             abortController = new AbortController();
-
-            try {
-                const response = await fetch(`/Members/Search?query=${encodeURIComponent(query)}`, { signal: abortController.signal });
-                const members = await response.json();
-
-                resultsDiv.innerHTML = '';
-                if (members.length === 0) {
-                    resultsDiv.innerHTML = '<div style="padding: 5px; color: #888;">No members found</div>';
-                } else {
-                    members.forEach(m => {
-                        const div = document.createElement('div');
-                        div.style.padding = '5px';
-                        div.style.cursor = 'pointer';
-                        div.style.borderBottom = '1px solid #eee';
-                        div.textContent = m.name;
-                        div.addEventListener('click', () => {
-                            memberIdInput.value = m.id;
-                            memberNameDiv.textContent = `Selected: ${m.name}`;
-                            searchInput.value = m.name;
-                            resultsDiv.style.display = 'none';
+            fetch('/Members/Search?query=' + encodeURIComponent(query), { signal: abortController.signal })
+                .then(function(r) { return r.json(); })
+                .then(function(members) {
+                    resultsDiv.innerHTML = '';
+                    if (members.length === 0) {
+                        resultsDiv.innerHTML = '<div class="p-3 text-gray-400 text-sm">No members found</div>';
+                    } else {
+                        members.forEach(function(m) {
+                            var div = document.createElement('div');
+                            div.className = 'px-3 py-2 cursor-pointer hover:bg-gray-50 border-b border-gray-100 text-sm';
+                            div.textContent = m.name;
+                            div.addEventListener('click', function() {
+                                memberIdInput.value = m.id;
+                                memberNameDiv.textContent = 'Selected: ' + m.name;
+                                searchInput.value = m.name;
+                                resultsDiv.style.display = 'none';
+                            });
+                            resultsDiv.appendChild(div);
                         });
-                        div.addEventListener('mouseover', () => div.style.backgroundColor = '#f0f0f0');
-                        div.addEventListener('mouseout', () => div.style.backgroundColor = 'white');
-                        resultsDiv.appendChild(div);
-                    });
-                }
-                resultsDiv.style.display = 'block';
-            } catch (e) {
-                if (e.name !== 'AbortError') console.error('Search error:', e);
-            }
+                    }
+                    resultsDiv.style.display = 'block';
+                })
+                .catch(function(e) {
+                    if (e.name !== 'AbortError') console.error('Search error:', e);
+                });
         });
 
-        document.addEventListener('click', (e) => {
+        document.addEventListener('click', function(e) {
             if (!searchInput.contains(e.target) && !resultsDiv.contains(e.target)) {
                 resultsDiv.style.display = 'none';
             }

@@ -4,47 +4,48 @@
     ViewData["Title"] = "Assign Membership";
 }
 
-<h2>Assign Plan to Member</h2>
+<div class="max-w-xl">
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold text-gray-900">Assign Plan to Member</h2>
+        <a asp-controller="Members" asp-action="Details" asp-route-id="@Model.MemberId" class="gymly-btn gymly-btn-secondary gymly-btn-sm">Back</a>
+    </div>
 
-<form asp-action="Create" method="post">
-    <input type="hidden" asp-for="MemberId" />
+    <div class="gymly-card">
+        <form asp-action="Create" method="post">
+            <input type="hidden" asp-for="MemberId" />
 
-    <table border="0" cellpadding="5">
-        <tr>
-            <td><strong>Member:</strong></td>
-            <td>@Model.MemberName</td>
-        </tr>
-        <tr>
-            <td><label asp-for="PlanId">Plan:</label></td>
-            <td>
-                <select asp-for="PlanId" asp-items="@(new SelectList(Model.AvailablePlans, "Id", "Title"))" required style="width: 300px; padding: 5px;">
+            <div class="mb-4 p-3 bg-gray-50 rounded-lg">
+                <label class="gymly-label">Member</label>
+                <p class="text-sm font-medium text-gray-900">@Model.MemberName</p>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="PlanId" class="gymly-label">Plan</label>
+                <select asp-for="PlanId" asp-items="@(new SelectList(Model.AvailablePlans, "Id", "Title"))" class="gymly-select" required>
                     <option value="">-- Select Plan --</option>
                 </select>
-                <span asp-validation-for="PlanId" style="color: red;"></span>
-            </td>
-        </tr>
-        <tr>
-            <td><label asp-for="StartDate">Start Date:</label></td>
-            <td>
-                <input asp-for="StartDate" type="date" style="width: 300px; padding: 5px;" />
-                <span asp-validation-for="StartDate" style="color: red;"></span>
-            </td>
-        </tr>
-        <tr>
-            <td><label asp-for="DurationInDays">Duration (days):</label></td>
-            <td>
-                <input asp-for="DurationInDays" type="number" min="1" max="3650" style="width: 300px; padding: 5px;" placeholder="Leave empty to use plan default" />
-                <span asp-validation-for="DurationInDays" style="color: red;"></span>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2" style="padding-top: 10px;">
-                <button type="submit" style="padding: 5px 15px;">Assign Membership</button>
-                <a asp-controller="Members" asp-action="Details" asp-route-id="@Model.MemberId" style="margin-left: 10px;">Cancel</a>
-            </td>
-        </tr>
-    </table>
-</form>
+                <span asp-validation-for="PlanId" class="field-validation-error"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="StartDate" class="gymly-label">Start Date</label>
+                <input asp-for="StartDate" type="date" class="gymly-input" />
+                <span asp-validation-for="StartDate" class="field-validation-error"></span>
+            </div>
+
+            <div class="mb-6">
+                <label asp-for="DurationInDays" class="gymly-label">Duration (days)</label>
+                <input asp-for="DurationInDays" type="number" min="1" max="3650" class="gymly-input" placeholder="Leave empty to use plan default" />
+                <span asp-validation-for="DurationInDays" class="field-validation-error"></span>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button type="submit" class="gymly-btn gymly-btn-primary">Assign Membership</button>
+                <a asp-controller="Members" asp-action="Details" asp-route-id="@Model.MemberId" class="gymly-btn gymly-btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

@@ -1,55 +1,55 @@
 ﻿@model Gymly.Web.Models.Sessions.CreateSessionViewModel
 
 @{
-    ViewData["Title"] = "Schedule New Gym Session";
+    ViewData["Title"] = "Schedule Session";
 }
 
-<h3>Schedule Gym Session</h3>
-
-<form asp-controller="Sessions" asp-action="Create" method="post">
-    @Html.AntiForgeryToken()
-
-    <div>
-        <label asp-for="ClassId">Gym Class:</label>
-        <select asp-for="ClassId" asp-items="Model.AvailableClasses">
-            <option value="">-- Select Class --</option>
-        </select>
-        <span asp-validation-for="ClassId"></span>
+<div class="max-w-xl">
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold text-gray-900">Schedule Session</h2>
+        <a asp-controller="Sessions" asp-action="Index" class="gymly-btn gymly-btn-secondary gymly-btn-sm">Back to List</a>
     </div>
 
-    <br />
+    <div class="gymly-card">
+        <form asp-controller="Sessions" asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
 
-    <div>
-        <label asp-for="TrainerId">Trainer Assignment:</label>
-        <select asp-for="TrainerId" asp-items="Model.AvailableTrainers">
-            <option value="">-- Select Trainer --</option>
-        </select>
-        <span asp-validation-for="TrainerId"></span>
+            <div class="mb-4">
+                <label asp-for="ClassId" class="gymly-label">Class</label>
+                <select asp-for="ClassId" asp-items="Model.AvailableClasses" class="gymly-select">
+                    <option value="">-- Select Class --</option>
+                </select>
+                <span asp-validation-for="ClassId" class="field-validation-error"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="TrainerId" class="gymly-label">Trainer</label>
+                <select asp-for="TrainerId" asp-items="Model.AvailableTrainers" class="gymly-select">
+                    <option value="">-- Select Trainer --</option>
+                </select>
+                <span asp-validation-for="TrainerId" class="field-validation-error"></span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label asp-for="StartTime" class="gymly-label">Start Time</label>
+                    <input asp-for="StartTime" type="datetime-local" class="gymly-input" />
+                    <span asp-validation-for="StartTime" class="field-validation-error"></span>
+                </div>
+                <div>
+                    <label asp-for="EndTime" class="gymly-label">End Time</label>
+                    <input asp-for="EndTime" type="datetime-local" class="gymly-input" />
+                    <span asp-validation-for="EndTime" class="field-validation-error"></span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button type="submit" class="gymly-btn gymly-btn-primary">Save Session</button>
+                <a asp-controller="Sessions" asp-action="Index" class="gymly-btn gymly-btn-secondary">Cancel</a>
+            </div>
+        </form>
     </div>
-
-    <br />
-
-    <div>
-        <label asp-for="StartTime">Session Start Time:</label>
-        <input asp-for="StartTime" type="datetime-local" />
-        <span asp-validation-for="StartTime"></span>
-    </div>
-
-    <br />
-
-    <div>
-        <label asp-for="EndTime">Session End Time:</label>
-        <input asp-for="EndTime" type="datetime-local" />
-        <span asp-validation-for="EndTime"></span>
-    </div>
-
-    <br />
-
-    <div>
-        <button type="submit">Save and Publish Session</button>
-        <a asp-controller="Sessions" asp-action="Index">Cancel</a>
-    </div>
-</form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

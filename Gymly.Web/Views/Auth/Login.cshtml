@@ -4,37 +4,45 @@
     ViewData["Title"] = "Sign In";
 }
 
-<div style="max-width: 400px; margin: 60px auto; padding: 30px; border: 1px solid #ddd; border-radius: 8px; background-color: #fff;">
-    <h2 style="text-align: center; margin-bottom: 24px; color: #333;">Gymly Sign In</h2>
-
-    <form asp-action="Login" method="post" novalidate>
-        <input type="hidden" asp-for="ReturnUrl" />
-
-        <div asp-validation-summary="ModelOnly" style="color: #dc3545; margin-bottom: 16px;"></div>
-
-        <div style="margin-bottom: 16px;">
-            <label asp-for="Username" style="display: block; margin-bottom: 4px; font-weight: 500;"></label>
-            <input asp-for="Username" style="width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
-            <span asp-validation-for="Username" style="color: #dc3545; font-size: 0.875em;"></span>
+<div class="min-h-[70vh] flex items-center justify-center">
+    <div class="w-full max-w-md">
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4" style="background: linear-gradient(135deg, var(--gymly-primary), var(--gymly-secondary));">
+                <span class="text-white text-2xl font-bold">G</span>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900">Welcome to Gymly</h1>
+            <p class="text-sm text-gray-500 mt-1">Sign in to your account</p>
         </div>
 
-        <div style="margin-bottom: 16px;">
-            <label asp-for="Password" style="display: block; margin-bottom: 4px; font-weight: 500;"></label>
-            <input asp-for="Password" style="width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
-            <span asp-validation-for="Password" style="color: #dc3545; font-size: 0.875em;"></span>
-        </div>
+        <div class="gymly-card">
+            <form asp-action="Login" method="post" novalidate>
+                <input type="hidden" asp-for="ReturnUrl" />
 
-        <div style="margin-bottom: 20px;">
-            <label>
-                <input asp-for="RememberMe" />
-                @Html.DisplayNameFor(m => m.RememberMe)
-            </label>
-        </div>
+                <div asp-validation-summary="ModelOnly" class="gymly-alert gymly-alert-danger mb-4"></div>
 
-        <button type="submit" style="width: 100%; padding: 10px; background-color: #007bff; color: #fff; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer;">
-            Sign In
-        </button>
-    </form>
+                <div class="mb-4">
+                    <label asp-for="Username" class="gymly-label">Username</label>
+                    <input asp-for="Username" class="gymly-input" placeholder="Enter your username" autofocus />
+                    <span asp-validation-for="Username" class="field-validation-error"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Password" class="gymly-label">Password</label>
+                    <input asp-for="Password" class="gymly-input" placeholder="Enter your password" />
+                    <span asp-validation-for="Password" class="field-validation-error"></span>
+                </div>
+
+                <div class="mb-6">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input asp-for="RememberMe" class="gymly-checkbox" />
+                        <span class="text-sm text-gray-600">@Html.DisplayNameFor(m => m.RememberMe)</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="w-full gymly-btn gymly-btn-primary py-3 text-center">Sign In</button>
+            </form>
+        </div>
+    </div>
 </div>
 
 @section Scripts {

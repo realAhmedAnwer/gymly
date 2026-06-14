@@ -5,101 +5,111 @@
     ViewData["Title"] = "Edit Plan";
 }
 
-<h2>Edit Membership Plan</h2>
+<div class="max-w-2xl">
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold text-gray-900">Edit Plan</h2>
+        <div class="flex items-center gap-2">
+            <a asp-action="Details" asp-route-id="@Model.Id" class="gymly-btn gymly-btn-secondary gymly-btn-sm">View Details</a>
+            <a asp-action="Index" class="gymly-btn gymly-btn-ghost gymly-btn-sm">Back to List</a>
+        </div>
+    </div>
 
-<form asp-action="Edit" method="post">
-    <div asp-validation-summary="ModelOnly" style="color:red;"></div>
-    <input type="hidden" asp-for="Id" />
-    <input type="hidden" asp-for="IsActive" />
+    <div class="gymly-card mb-6">
+        <form asp-action="Edit" method="post">
+            <div asp-validation-summary="ModelOnly" class="gymly-alert gymly-alert-danger mb-4"></div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="IsActive" />
 
-    <p>
-        <label asp-for="Title">Plan Title:</label><br />
-        <input asp-for="Title" />
-        <span asp-validation-for="Title" style="color:red;"></span>
-    </p>
+            <div class="mb-4">
+                <label asp-for="Title" class="gymly-label">Plan Title</label>
+                <input asp-for="Title" class="gymly-input" />
+                <span asp-validation-for="Title" class="field-validation-error"></span>
+            </div>
 
-    <p>
-        <label asp-for="Description">Description:</label><br />
-        <textarea asp-for="Description" rows="3" cols="40"></textarea>
-        <span asp-validation-for="Description" style="color:red;"></span>
-    </p>
+            <div class="mb-4">
+                <label asp-for="Description" class="gymly-label">Description</label>
+                <textarea asp-for="Description" class="gymly-textarea" rows="3"></textarea>
+                <span asp-validation-for="Description" class="field-validation-error"></span>
+            </div>
 
-    <p>
-        <label asp-for="Price">Price:</label><br />
-        <input asp-for="Price" type="number" step="0.01" />
-        <span asp-validation-for="Price" style="color:red;"></span>
-    </p>
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label asp-for="Price" class="gymly-label">Price</label>
+                    <input asp-for="Price" type="number" step="0.01" class="gymly-input" />
+                    <span asp-validation-for="Price" class="field-validation-error"></span>
+                </div>
+                <div>
+                    <label asp-for="DurationInDays" class="gymly-label">Duration (Days)</label>
+                    <input asp-for="DurationInDays" type="number" class="gymly-input" />
+                    <span asp-validation-for="DurationInDays" class="field-validation-error"></span>
+                </div>
+            </div>
 
-    <p>
-        <label asp-for="DurationInDays">Duration (Days):</label><br />
-        <input asp-for="DurationInDays" type="number" />
-        <span asp-validation-for="DurationInDays" style="color:red;"></span>
-    </p>
+            <div class="flex items-center gap-3">
+                <button type="submit" class="gymly-btn gymly-btn-primary">Save Changes</button>
+                <a asp-action="Index" class="gymly-btn gymly-btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
 
-    <p>
-        <button type="submit">Save Changes</button>
-        <a asp-action="Index">Cancel</a>
-        <a asp-action="Details" asp-route-id="@Model.Id">View Details</a>
-    </p>
-</form>
+    <div class="gymly-card mb-6">
+        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Access Rules</h3>
 
-<h3>Access Rules</h3>
+        @if (Model.AccessRules.Any())
+        {
+            <div class="overflow-x-auto mb-4">
+                <table class="gymly-table">
+                    <thead>
+                        <tr>
+                            <th>Rule Type</th>
+                            <th>Rule Value</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var rule in Model.AccessRules)
+                        {
+                            <tr>
+                                <td><span class="gymly-badge gymly-badge-info">@rule.RuleType</span></td>
+                                <td>@rule.RuleValue</td>
+                                <td>
+                                    <form asp-action="RemoveRule" method="post" class="inline">
+                                        <input type="hidden" name="ruleId" value="@rule.Id" />
+                                        <input type="hidden" name="planId" value="@Model.Id" />
+                                        <button type="submit" class="gymly-btn gymly-btn-danger gymly-btn-sm">Remove</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <p class="text-gray-400 text-sm mb-4">No access rules defined yet.</p>
+        }
 
-@if (Model.AccessRules.Any())
-{
-    <table border="1" cellpadding="5">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Rule Type</th>
-                <th>Rule Value</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var rule in Model.AccessRules)
-            {
-                <tr>
-                    <td>@rule.Id</td>
-                    <td>@rule.RuleType</td>
-                    <td>@rule.RuleValue</td>
-                    <td>
-                        <form asp-action="RemoveRule" method="post" style="display:inline;">
-                            <input type="hidden" name="ruleId" value="@rule.Id" />
-                            <input type="hidden" name="planId" value="@Model.Id" />
-                            <button type="submit">Remove</button>
-                        </form>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-else
-{
-    <p>No access rules defined yet.</p>
-}
-
-<h4>Add New Access Rule</h4>
-<form asp-action="AddRule" method="post">
-    <input type="hidden" name="Id" value="@Model.Id" />
-    <p>
-        <label>Rule Type:</label><br />
-        <select name="NewRuleType">
-            @foreach (var ruleType in Enum.GetValues<AccessType>())
-            {
-                <option value="@ruleType">@ruleType</option>
-            }
-        </select>
-    </p>
-    <p>
-        <label>Rule Value:</label><br />
-        <input name="NewRuleValue" placeholder="e.g., 1, 2, 3" />
-    </p>
-    <p>
-        <button type="submit">Add Rule</button>
-    </p>
-</form>
+        <h4 class="text-sm font-semibold text-gray-700 mb-3">Add New Access Rule</h4>
+        <form asp-action="AddRule" method="post" class="flex flex-wrap items-end gap-4">
+            <input type="hidden" name="Id" value="@Model.Id" />
+            <div class="min-w-[160px]">
+                <label class="gymly-label">Rule Type</label>
+                <select name="NewRuleType" class="gymly-select">
+                    @foreach (var ruleType in Enum.GetValues<AccessType>())
+                    {
+                        <option value="@ruleType">@ruleType</option>
+                    }
+                </select>
+            </div>
+            <div class="flex-1 min-w-[120px]">
+                <label class="gymly-label">Rule Value</label>
+                <input name="NewRuleValue" class="gymly-input" placeholder="e.g., 1, 2, 3" />
+            </div>
+            <button type="submit" class="gymly-btn gymly-btn-primary">Add Rule</button>
+        </form>
+    </div>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

@@ -4,43 +4,54 @@
     ViewData["Title"] = "My Profile";
 }
 
-<h2>My Profile</h2>
+<div class="max-w-xl">
+    <div class="mb-6">
+        <h2 class="text-xl font-bold text-gray-900">My Profile</h2>
+    </div>
 
-<div style="max-width: 500px; margin-top: 20px;">
-    <form asp-action="Profile" method="post" novalidate>
-        <div asp-validation-summary="ModelOnly" style="color: #dc3545; margin-bottom: 16px;"></div>
+    <div class="gymly-card">
+        <form asp-action="Profile" method="post" novalidate>
+            <div asp-validation-summary="ModelOnly" class="gymly-alert gymly-alert-danger mb-4"></div>
 
-        <div style="margin-bottom: 16px;">
-            <label style="display: block; margin-bottom: 4px; font-weight: 500;">Username</label>
-            <input value="@Model.Username" disabled style="width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; background-color: #f5f5f5;" />
-        </div>
+            <div class="mb-4">
+                <label class="gymly-label">Username</label>
+                <input value="@Model.Username" disabled class="gymly-input bg-gray-50 cursor-not-allowed" />
+            </div>
 
-        <div style="margin-bottom: 16px;">
-            <label style="display: block; margin-bottom: 4px; font-weight: 500;">Role</label>
-            <input value="@Model.RoleName" disabled style="width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; background-color: #f5f5f5;" />
-        </div>
+            <div class="mb-4">
+                <label class="gymly-label">Role</label>
+                <input value="@Model.RoleName" disabled class="gymly-input bg-gray-50 cursor-not-allowed" />
+            </div>
 
-        <div style="margin-bottom: 16px;">
-            <label style="display: block; margin-bottom: 4px; font-weight: 500;">Status</label>
-            <input value="@(Model.IsActive ? "Active" : "Inactive")" disabled style="width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; background-color: #f5f5f5;" />
-        </div>
+            <div class="mb-4">
+                <label class="gymly-label">Status</label>
+                <div class="py-2">
+                    @if (Model.IsActive)
+                    {
+                        <span class="gymly-badge gymly-badge-success">Active</span>
+                    }
+                    else
+                    {
+                        <span class="gymly-badge gymly-badge-danger">Inactive</span>
+                    }
+                </div>
+            </div>
 
-        <div style="margin-bottom: 16px;">
-            <label asp-for="FullName" style="display: block; margin-bottom: 4px; font-weight: 500;"></label>
-            <input asp-for="FullName" style="width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
-            <span asp-validation-for="FullName" style="color: #dc3545; font-size: 0.875em;"></span>
-        </div>
+            <div class="mb-4">
+                <label asp-for="FullName" class="gymly-label">Full Name</label>
+                <input asp-for="FullName" class="gymly-input" />
+                <span asp-validation-for="FullName" class="field-validation-error"></span>
+            </div>
 
-        <div style="margin-bottom: 16px;">
-            <label asp-for="Email" style="display: block; margin-bottom: 4px; font-weight: 500;"></label>
-            <input asp-for="Email" style="width: 100%; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
-            <span asp-validation-for="Email" style="color: #dc3545; font-size: 0.875em;"></span>
-        </div>
+            <div class="mb-6">
+                <label asp-for="Email" class="gymly-label">Email</label>
+                <input asp-for="Email" class="gymly-input" />
+                <span asp-validation-for="Email" class="field-validation-error"></span>
+            </div>
 
-        <button type="submit" style="padding: 10px 24px; background-color: #007bff; color: #fff; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer;">
-            Update Profile
-        </button>
-    </form>
+            <button type="submit" class="gymly-btn gymly-btn-primary">Update Profile</button>
+        </form>
+    </div>
 </div>
 
 @section Scripts {

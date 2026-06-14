@@ -1,73 +1,81 @@
 ﻿@model Gymly.Web.Models.Sessions.SessionsDashboardViewModel
 
 @{
-    ViewData["Title"] = "Sessions Dashboard";
+    ViewData["Title"] = "Sessions";
 }
 
-<h2>Scheduled Sessions (@Model.TotalCount)</h2>
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+    <div>
+        <h2 class="text-xl font-bold text-gray-900">Sessions</h2>
+        <p class="text-sm text-gray-500">@Model.TotalCount total sessions</p>
+    </div>
+    <a asp-action="Create" class="gymly-btn gymly-btn-primary">+ Schedule Session</a>
+</div>
 
-<p>
-    <a asp-action="Create">Schedule New Session</a>
-</p>
-
-<table border="1" cellpadding="5">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Class Name</th>
-            <th>Trainer Name</th>
-            <th>Starts At</th>
-            <th>Ends At</th>
-            <th>Capacity</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (!Model.Sessions.Any())
-        {
-            <tr>
-                <td colspan="6">No sessions scheduled for today.</td>
-            </tr>
-        }
-        else
-        {
-            foreach (var session in Model.Sessions)
-            {
-                <tr>
-                    <td>@session.Id</td>
-                    <td>@session.ClassName</td>
-                    <td>@session.TrainerName</td>
-                    <td>@session.StartTime</td>
-                    <td>@session.EndTime</td>
-                    <td>
-                        @if (session.MaxCapacity > 0)
-                        {
-                            var fillPercent = session.MaxCapacity > 0 ? (session.BookedCount * 100 / session.MaxCapacity) : 0;
-                            var color = fillPercent >= 100 ? "red" : fillPercent >= 80 ? "orange" : "green";
-                            <span style="color: @color; font-weight: bold;">
-                                @session.BookedCount / @session.MaxCapacity
-                            </span>
-                        }
-                        else
-                        {
-                            <span>@session.BookedCount / Unlimited</span>
-                        }
-                    </td>
-                </tr>
-            }
-        }
-    </tbody>
-</table>
+<div class="gymly-card overflow-hidden p-0">
+    @if (!Model.Sessions.Any())
+    {
+        <p class="text-gray-400 text-sm py-8 text-center">No sessions scheduled.</p>
+    }
+    else
+    {
+        <div class="overflow-x-auto">
+            <table class="gymly-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Class</th>
+                        <th>Trainer</th>
+                        <th>Starts At</th>
+                        <th>Ends At</th>
+                        <th>Capacity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var session in Model.Sessions)
+                    {
+                        <tr>
+                            <td class="text-gray-400">@session.Id</td>
+                            <td class="font-medium">@session.ClassName</td>
+                            <td>@session.TrainerName</td>
+                            <td>@session.StartTime</td>
+                            <td>@session.EndTime</td>
+                            <td>
+                                @if (session.MaxCapacity > 0)
+                                {
+                                    var fillPercent = session.MaxCapacity > 0 ? (session.BookedCount * 100 / session.MaxCapacity) : 0;
+                                    if (fillPercent >= 100)
+                                    {
+                                        <span class="capacity-red">@session.BookedCount / @session.MaxCapacity</span>
+                                    }
+                                    else if (fillPercent >= 80)
+                                    {
+                                        <span class="capacity-orange">@session.BookedCount / @session.MaxCapacity</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="capacity-green">@session.BookedCount / @session.MaxCapacity</span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="text-gray-500">@session.BookedCount / Unlimited</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
 
 @if (Model.TotalPages > 1)
 {
-    <nav>
-        <ul class="pagination">
-            @for (var i = 1; i <= Model.TotalPages; i++)
-            {
-                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                    <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
-                </li>
-            }
-        </ul>
-    </nav>
+    <div class="gymly-pagination mt-4">
+        @for (var i = 1; i <= Model.TotalPages; i++)
+        {
+            <a asp-action="Index" asp-route-page="@i" class="gymly-page-btn @(i == Model.CurrentPage ? "active" : "")">@i</a>
+        }
+    </div>
 }

@@ -1,67 +1,70 @@
 @model Gymly.Web.Models.Users.UsersIndexViewModel
 
 @{
-    ViewData["Title"] = "System Users";
+    ViewData["Title"] = "Users";
 }
 
-<h2>System Users</h2>
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+    <div>
+        <h2 class="text-xl font-bold text-gray-900">System Users</h2>
+        <p class="text-sm text-gray-500">@Model.Users.Count total users</p>
+    </div>
+    <a asp-action="Create" class="gymly-btn gymly-btn-primary">+ Add User</a>
+</div>
 
-<p>
-    <a asp-action="Create" style="display: inline-block; padding: 8px 16px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 4px; margin-bottom: 16px;">Create New User</a>
-</p>
-
-<table style="width: 100%; border-collapse: collapse;">
-    <thead>
-        <tr style="background-color: #f8f9fa; text-align: left;">
-            <th style="padding: 10px; border-bottom: 2px solid #dee2e6;">ID</th>
-            <th style="padding: 10px; border-bottom: 2px solid #dee2e6;">Username</th>
-            <th style="padding: 10px; border-bottom: 2px solid #dee2e6;">Full Name</th>
-            <th style="padding: 10px; border-bottom: 2px solid #dee2e6;">Email</th>
-            <th style="padding: 10px; border-bottom: 2px solid #dee2e6;">Role</th>
-            <th style="padding: 10px; border-bottom: 2px solid #dee2e6;">Status</th>
-            <th style="padding: 10px; border-bottom: 2px solid #dee2e6;">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var user in Model.Users)
-        {
-            var isProtectedUser = user.Role == "Super Admin" || user.Role == "Admin";
-            var canDelete = User.IsInRole("Super Admin") || (!isProtectedUser && User.IsInRole("Admin"));
-
-            <tr>
-                <td style="padding: 10px; border-bottom: 1px solid #dee2e6;">@user.Id</td>
-                <td style="padding: 10px; border-bottom: 1px solid #dee2e6;">@user.Username</td>
-                <td style="padding: 10px; border-bottom: 1px solid #dee2e6;">@user.FullName</td>
-                <td style="padding: 10px; border-bottom: 1px solid #dee2e6;">@user.Email</td>
-                <td style="padding: 10px; border-bottom: 1px solid #dee2e6;">@user.Role</td>
-                <td style="padding: 10px; border-bottom: 1px solid #dee2e6;">
-                    @if (user.IsActive)
+<div class="gymly-card overflow-hidden p-0">
+    @if (!Model.Users.Any())
+    {
+        <p class="text-gray-400 text-sm py-8 text-center">No users found.</p>
+    }
+    else
+    {
+        <div class="overflow-x-auto">
+            <table class="gymly-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model.Users)
                     {
-                        <span style="color: #28a745;">Active</span>
-                    }
-                    else
-                    {
-                        <span style="color: #dc3545;">Inactive</span>
-                    }
-                </td>
-                <td style="padding: 10px; border-bottom: 1px solid #dee2e6;">
-                    @if (canDelete)
-                    {
-                        <form asp-action="Delete" asp-route-id="@user.Id" method="post" style="display:inline;">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" style="padding: 4px 12px; background-color: #dc3545; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 0.875em;"
-                                    onclick="return confirm('Are you sure you want to delete @user.Username?');">
-                                Delete
-                            </button>
-                        </form>
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                        var isProtectedUser = user.Role == "Super Admin" || user.Role == "Admin";
+                        var canDelete = User.IsInRole("Super Admin") || (!isProtectedUser && User.IsInRole("Admin"));
 
-@if (!Model.Users.Any())
-{
-    <p style="text-align: center; color: #666; margin-top: 20px;">No users found.</p>
-}
+                        <tr>
+                            <td class="font-medium">@user.Username</td>
+                            <td>@user.FullName</td>
+                            <td>@user.Email</td>
+                            <td><span class="gymly-badge gymly-badge-info">@user.Role</span></td>
+                            <td>
+                                @if (user.IsActive)
+                                {
+                                    <span class="gymly-badge gymly-badge-success">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="gymly-badge gymly-badge-danger">Inactive</span>
+                                }
+                            </td>
+                            <td>
+                                @if (canDelete)
+                                {
+                                    <form asp-action="Delete" asp-route-id="@user.Id" method="post" class="inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="gymly-btn gymly-btn-danger gymly-btn-sm" onclick="return confirm('Are you sure you want to delete @user.Username?');">Delete</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

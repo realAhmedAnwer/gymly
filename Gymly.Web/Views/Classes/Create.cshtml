@@ -4,34 +4,41 @@
     ViewData["Title"] = "Create Class";
 }
 
-<h2>Create New Fitness Class Definition</h2>
+<div class="max-w-xl">
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold text-gray-900">Create New Class</h2>
+        <a asp-action="Index" class="gymly-btn gymly-btn-secondary gymly-btn-sm">Back to List</a>
+    </div>
 
-<form asp-action="Create" method="post">
-    <div asp-validation-summary="ModelOnly" style="color:red;"></div>
+    <div class="gymly-card">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="gymly-alert gymly-alert-danger mb-4"></div>
 
-    <p>
-        <label asp-for="Name">Class Title / Name:</label><br />
-        <input asp-for="Name" />
-        <span asp-validation-for="Name" style="color:red;"></span>
-    </p>
+            <div class="mb-4">
+                <label asp-for="Name" class="gymly-label">Class Name</label>
+                <input asp-for="Name" class="gymly-input" placeholder="Enter class name" />
+                <span asp-validation-for="Name" class="field-validation-error"></span>
+            </div>
 
-    <p>
-        <label asp-for="Description">Description:</label><br />
-        <textarea asp-for="Description" rows="3" cols="40"></textarea>
-        <span asp-validation-for="Description" style="color:red;"></span>
-    </p>
+            <div class="mb-4">
+                <label asp-for="Description" class="gymly-label">Description</label>
+                <textarea asp-for="Description" class="gymly-textarea" rows="3" placeholder="Enter class description"></textarea>
+                <span asp-validation-for="Description" class="field-validation-error"></span>
+            </div>
 
-    <p>
-        <label asp-for="MaxCapacity">Maximum Capacity Attendance Limit:</label><br />
-        <input asp-for="MaxCapacity" type="number" />
-        <span asp-validation-for="MaxCapacity" style="color:red;"></span>
-    </p>
+            <div class="mb-6">
+                <label asp-for="MaxCapacity" class="gymly-label">Maximum Capacity</label>
+                <input asp-for="MaxCapacity" type="number" class="gymly-input" placeholder="1-200" />
+                <span asp-validation-for="MaxCapacity" class="field-validation-error"></span>
+            </div>
 
-    <p>
-        <button type="submit">Save Class Definition</button>
-        <a asp-action="Index">Cancel</a>
-    </p>
-</form>
+            <div class="flex items-center gap-3">
+                <button type="submit" class="gymly-btn gymly-btn-primary">Save Class</button>
+                <a asp-action="Index" class="gymly-btn gymly-btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

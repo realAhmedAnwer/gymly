@@ -3,107 +3,231 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Gymly.Web</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <title>@ViewData["Title"] - Gymly</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gymly: {
+                            primary: '#6C3CE1',
+                            'primary-light': '#8B5CF6',
+                            'primary-dark': '#5B21B6',
+                            secondary: '#00E676',
+                            'secondary-light': '#69F0AE',
+                            accent: '#FF6B35',
+                            dark: '#0F172A',
+                            'dark-lighter': '#1E293B',
+                            'dark-border': '#334155',
+                            light: '#F8FAFC',
+                            success: '#10B981',
+                            danger: '#EF4444',
+                            warning: '#F59E0B',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Gymly.Web.styles.css" asp-append-version="true" />
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Gymly.Web</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
+<body class="bg-gymly-light font-sans text-gray-900 min-h-screen">
+    <div id="sidebarOverlay" class="sidebar-overlay fixed inset-0 bg-black/50 z-35 hidden lg:hidden" onclick="toggleSidebar()"></div>
+
+    <aside id="sidebar" class="sidebar">
+        <div class="sidebar-brand">
+            <div class="sidebar-brand-icon">G</div>
+            <span class="sidebar-brand-text">Gymly</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Main</div>
+                <a asp-controller="Home" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")">
+                    <span class="sidebar-link-icon">&#9632;</span>
+                    Dashboard
+                </a>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Management</div>
+
+                <button class="sidebar-toggle @(ViewContext.RouteData.Values["controller"]?.ToString() == "Members" ? "open" : "")" onclick="toggleSubmenu(this)" data-section="members">
+                    <span class="flex items-center gap-3">
+                        <span class="sidebar-link-icon">&#9783;</span>
+                        Members
+                    </span>
+                    <span class="chevron">&#9656;</span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        @if (User.Identity?.IsAuthenticated == true)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Dashboard</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Sessions" asp-action="Index">Sessions</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Trainers" asp-action="Index">Trainers</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Classes" asp-action="Index">Classes</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Plans" asp-action="Index">Plans</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Members" asp-action="Index">Members</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Bookings" asp-action="Index">Bookings</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Attendance" asp-action="Index">Attendance</a>
-                            </li>
-                            @if (User.IsInRole("Super Admin") || User.IsInRole("Admin"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
-                                </li>
-                            }
-                        }
-                    </ul>
-                    <ul class="navbar-nav">
-                        @if (User.Identity?.IsAuthenticated == true)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Users" asp-action="Profile">@User.Identity.Name</a>
-                            </li>
-                            <li class="nav-item">
-                                <form asp-controller="Auth" asp-action="Logout" method="post" class="d-inline">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="nav-link btn btn-link text-dark" style="border: none; background: none; cursor: pointer;">Logout</button>
-                                </form>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Auth" asp-action="Login">Sign In</a>
-                            </li>
-                        }
-                    </ul>
+                <div class="sidebar-submenu @(ViewContext.RouteData.Values["controller"]?.ToString() == "Members" ? "open" : "")" id="submenu-members">
+                    <a asp-controller="Members" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" && ViewContext.RouteData.Values["controller"]?.ToString() == "Members" ? "active" : "")">All Members</a>
+                    <a asp-controller="Members" asp-action="Create" class="sidebar-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Create" && ViewContext.RouteData.Values["controller"]?.ToString() == "Members" ? "active" : "")">Add Member</a>
+                </div>
+
+                <button class="sidebar-toggle @(ViewContext.RouteData.Values["controller"]?.ToString() == "Trainers" ? "open" : "")" onclick="toggleSubmenu(this)" data-section="trainers">
+                    <span class="flex items-center gap-3">
+                        <span class="sidebar-link-icon">&#9733;</span>
+                        Trainers
+                    </span>
+                    <span class="chevron">&#9656;</span>
+                </button>
+                <div class="sidebar-submenu @(ViewContext.RouteData.Values["controller"]?.ToString() == "Trainers" ? "open" : "")" id="submenu-trainers">
+                    <a asp-controller="Trainers" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" && ViewContext.RouteData.Values["controller"]?.ToString() == "Trainers" ? "active" : "")">All Trainers</a>
+                    <a asp-controller="Trainers" asp-action="Create" class="sidebar-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Create" && ViewContext.RouteData.Values["controller"]?.ToString() == "Trainers" ? "active" : "")">Add Trainer</a>
+                </div>
+
+                <button class="sidebar-toggle @(ViewContext.RouteData.Values["controller"]?.ToString() == "Classes" ? "open" : "")" onclick="toggleSubmenu(this)" data-section="classes">
+                    <span class="flex items-center gap-3">
+                        <span class="sidebar-link-icon">&#9830;</span>
+                        Classes
+                    </span>
+                    <span class="chevron">&#9656;</span>
+                </button>
+                <div class="sidebar-submenu @(ViewContext.RouteData.Values["controller"]?.ToString() == "Classes" ? "open" : "")" id="submenu-classes">
+                    <a asp-controller="Classes" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" && ViewContext.RouteData.Values["controller"]?.ToString() == "Classes" ? "active" : "")">All Classes</a>
+                    <a asp-controller="Classes" asp-action="Create" class="sidebar-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Create" && ViewContext.RouteData.Values["controller"]?.ToString() == "Classes" ? "active" : "")">Add Class</a>
+                </div>
+
+                <button class="sidebar-toggle @(ViewContext.RouteData.Values["controller"]?.ToString() == "Plans" ? "open" : "")" onclick="toggleSubmenu(this)" data-section="plans">
+                    <span class="flex items-center gap-3">
+                        <span class="sidebar-link-icon">&#9733;</span>
+                        Plans
+                    </span>
+                    <span class="chevron">&#9656;</span>
+                </button>
+                <div class="sidebar-submenu @(ViewContext.RouteData.Values["controller"]?.ToString() == "Plans" ? "open" : "")" id="submenu-plans">
+                    <a asp-controller="Plans" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" && ViewContext.RouteData.Values["controller"]?.ToString() == "Plans" ? "active" : "")">All Plans</a>
+                    <a asp-controller="Plans" asp-action="Create" class="sidebar-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Create" && ViewContext.RouteData.Values["controller"]?.ToString() == "Plans" ? "active" : "")">Add Plan</a>
                 </div>
             </div>
+
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">Scheduling</div>
+
+                <button class="sidebar-toggle @(ViewContext.RouteData.Values["controller"]?.ToString() == "Sessions" ? "open" : "")" onclick="toggleSubmenu(this)" data-section="sessions">
+                    <span class="flex items-center gap-3">
+                        <span class="sidebar-link-icon">&#9201;</span>
+                        Sessions
+                    </span>
+                    <span class="chevron">&#9656;</span>
+                </button>
+                <div class="sidebar-submenu @(ViewContext.RouteData.Values["controller"]?.ToString() == "Sessions" ? "open" : "")" id="submenu-sessions">
+                    <a asp-controller="Sessions" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" && ViewContext.RouteData.Values["controller"]?.ToString() == "Sessions" ? "active" : "")">All Sessions</a>
+                    <a asp-controller="Sessions" asp-action="Create" class="sidebar-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Create" && ViewContext.RouteData.Values["controller"]?.ToString() == "Sessions" ? "active" : "")">Schedule Session</a>
+                </div>
+
+                <button class="sidebar-toggle @(ViewContext.RouteData.Values["controller"]?.ToString() == "Bookings" ? "open" : "")" onclick="toggleSubmenu(this)" data-section="bookings">
+                    <span class="flex items-center gap-3">
+                        <span class="sidebar-link-icon">&#9998;</span>
+                        Bookings
+                    </span>
+                    <span class="chevron">&#9656;</span>
+                </button>
+                <div class="sidebar-submenu @(ViewContext.RouteData.Values["controller"]?.ToString() == "Bookings" ? "open" : "")" id="submenu-bookings">
+                    <a asp-controller="Bookings" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" && ViewContext.RouteData.Values["controller"]?.ToString() == "Bookings" ? "active" : "")">All Bookings</a>
+                    <a asp-controller="Bookings" asp-action="Create" class="sidebar-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Create" && ViewContext.RouteData.Values["controller"]?.ToString() == "Bookings" ? "active" : "")">Create Booking</a>
+                </div>
+
+                <a asp-controller="Attendance" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Attendance" ? "active" : "")">
+                    <span class="sidebar-link-icon">&#9851;</span>
+                    Attendance
+                </a>
+            </div>
+
+            @if (User.IsInRole("Super Admin") || User.IsInRole("Admin"))
+            {
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Administration</div>
+                    <button class="sidebar-toggle @(ViewContext.RouteData.Values["controller"]?.ToString() == "Users" ? "open" : "")" onclick="toggleSubmenu(this)" data-section="users">
+                        <span class="flex items-center gap-3">
+                            <span class="sidebar-link-icon">&#9881;</span>
+                            Users
+                        </span>
+                        <span class="chevron">&#9656;</span>
+                    </button>
+                    <div class="sidebar-submenu @(ViewContext.RouteData.Values["controller"]?.ToString() == "Users" ? "open" : "")" id="submenu-users">
+                        <a asp-controller="Users" asp-action="Index" class="sidebar-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Index" && ViewContext.RouteData.Values["controller"]?.ToString() == "Users" ? "active" : "")">All Users</a>
+                        <a asp-controller="Users" asp-action="Create" class="sidebar-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Create" && ViewContext.RouteData.Values["controller"]?.ToString() == "Users" ? "active" : "")">Add User</a>
+                    </div>
+                </div>
+            }
         </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="sidebar-user-avatar">@(User.Identity?.Name?.Length > 0 ? User.Identity.Name.Substring(0, 1).ToUpper() : "U")</div>
+                    <div class="sidebar-user-info">
+                        <a asp-controller="Users" asp-action="Profile" class="sidebar-user-name block hover:text-gymly-primary-light transition-colors">@User.Identity?.Name</a>
+                    </div>
+                    <form asp-controller="Auth" asp-action="Logout" method="post" class="ml-auto">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="text-gymly-text-on-dark-secondary hover:text-red-400 transition-colors text-sm flex items-center gap-1" title="Logout">Logout &#10140;</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </aside>
+
+    <div class="main-content">
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Toggle menu">&#9776;</button>
+                <h1 class="topbar-title">@ViewData["Title"]</h1>
+            </div>
+            <div class="topbar-right">
+                @if (User.Identity?.IsAuthenticated != true)
+                {
+                    <a asp-controller="Auth" asp-action="Login" class="gymly-btn gymly-btn-primary text-sm">Sign In</a>
+                }
+            </div>
+        </header>
+
+        <div class="page-content">
             @if (TempData["SuccessMessage"] != null)
             {
-                <div style="background-color: #d4edda; color: #155724; padding: 10px; border: 1px solid #c3e6cb; margin-bottom: 15px;">
-                    @TempData["SuccessMessage"]
+                <div class="gymly-alert gymly-alert-success mb-4">
+                    <span>&#10003;</span> @TempData["SuccessMessage"]
                 </div>
             }
             @if (TempData["ErrorMessage"] != null)
             {
-                <div style="background-color: #f8d7da; color: #721c24; padding: 10px; border: 1px solid #f5c6cb; margin-bottom: 15px;">
-                    @TempData["ErrorMessage"]
+                <div class="gymly-alert gymly-alert-danger mb-4">
+                    <span>&#10007;</span> @TempData["ErrorMessage"]
                 </div>
             }
             @RenderBody()
-        </main>
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - Gymly.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        function toggleSidebar() {
+            var sidebar = document.getElementById('sidebar');
+            var overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+        }
+        function toggleSubmenu(btn) {
+            btn.classList.toggle('open');
+            var section = btn.getAttribute('data-section');
+            var submenu = document.getElementById('submenu-' + section);
+            if (submenu) {
+                submenu.classList.toggle('open');
+            }
+        }
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

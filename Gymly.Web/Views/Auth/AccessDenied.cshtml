@@ -2,9 +2,11 @@
     ViewData["Title"] = "Access Denied";
 }
 
-<div style="text-align: center; margin: 80px auto; max-width: 500px;">
-    <h1 style="font-size: 3rem; color: #dc3545;">403</h1>
-    <h2 style="color: #333; margin-bottom: 16px;">Access Denied</h2>
-    <p style="color: #666; margin-bottom: 24px;">You do not have permission to access this resource.</p>
-    <a asp-controller="Home" asp-action="Index" style="color: #007bff; text-decoration: none;">Return to Dashboard</a>
+<div class="min-h-[70vh] flex items-center justify-center">
+    <div class="text-center">
+        <h1 class="text-6xl font-extrabold text-gymly-danger mb-4">403</h1>
+        <h2 class="text-xl font-bold text-gray-900 mb-2">Access Denied</h2>
+        <p class="text-gray-500 mb-6">You do not have permission to access this resource.</p>
+        <a asp-controller="Home" asp-action="Index" class="gymly-btn gymly-btn-primary">Return to Dashboard</a>
+    </div>
 </div>

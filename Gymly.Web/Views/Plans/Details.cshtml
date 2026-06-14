@@ -4,65 +4,83 @@
     ViewData["Title"] = "Plan Details";
 }
 
-<h2>Plan Details</h2>
+<div class="max-w-2xl">
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold text-gray-900">Plan Details</h2>
+        <div class="flex items-center gap-2">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="gymly-btn gymly-btn-secondary gymly-btn-sm">Edit</a>
+            <a asp-action="Index" class="gymly-btn gymly-btn-ghost gymly-btn-sm">Back to List</a>
+        </div>
+    </div>
 
-<p>
-    <a asp-action="Index">Back to List</a>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
-</p>
+    <div class="gymly-card mb-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <label class="gymly-label">ID</label>
+                <p class="text-sm text-gray-600">@Model.Id</p>
+            </div>
+            <div>
+                <label class="gymly-label">Status</label>
+                <div>
+                    @if (Model.IsActive)
+                    {
+                        <span class="gymly-badge gymly-badge-success">Active</span>
+                    }
+                    else
+                    {
+                        <span class="gymly-badge gymly-badge-danger">Inactive</span>
+                    }
+                </div>
+            </div>
+            <div>
+                <label class="gymly-label">Title</label>
+                <p class="text-sm font-medium text-gray-900">@Model.Title</p>
+            </div>
+            <div>
+                <label class="gymly-label">Price</label>
+                <p class="text-sm text-gray-600">@Model.Price.ToString("C")</p>
+            </div>
+            <div>
+                <label class="gymly-label">Description</label>
+                <p class="text-sm text-gray-600">@Model.Description</p>
+            </div>
+            <div>
+                <label class="gymly-label">Duration (Days)</label>
+                <p class="text-sm text-gray-600">@Model.DurationInDays</p>
+            </div>
+        </div>
+    </div>
 
-<table border="1" cellpadding="5">
-    <tr>
-        <th>ID</th>
-        <td>@Model.Id</td>
-    </tr>
-    <tr>
-        <th>Title</th>
-        <td>@Model.Title</td>
-    </tr>
-    <tr>
-        <th>Description</th>
-        <td>@Model.Description</td>
-    </tr>
-    <tr>
-        <th>Price</th>
-        <td>@Model.Price.ToString("C")</td>
-    </tr>
-    <tr>
-        <th>Duration (Days)</th>
-        <td>@Model.DurationInDays</td>
-    </tr>
-    <tr>
-        <th>Status</th>
-        <td>@(Model.IsActive ? "Active" : "Inactive")</td>
-    </tr>
-</table>
+    <div class="gymly-card">
+        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Access Rules</h3>
 
-<h3>Access Rules</h3>
-
-@if (Model.AccessRules.Any())
-{
-    <table border="1" cellpadding="5">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Rule Type</th>
-                <th>Rule Value</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var rule in Model.AccessRules)
-            {
-                <tr>
-                    <td>@rule.Id</td>
-                    <td>@rule.RuleType</td>
-                    <td>@rule.RuleValue</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-else
-{
-    <p>No access rules defined for this plan.</p>
-}
+        @if (Model.AccessRules.Any())
+        {
+            <div class="overflow-x-auto">
+                <table class="gymly-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Rule Type</th>
+                            <th>Rule Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var rule in Model.AccessRules)
+                        {
+                            <tr>
+                                <td class="text-gray-400">@rule.Id</td>
+                                <td><span class="gymly-badge gymly-badge-info">@rule.RuleType</span></td>
+                                <td>@rule.RuleValue</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <p class="text-gray-400 text-sm">No access rules defined for this plan.</p>
+        }
+    </div>
+</div>
