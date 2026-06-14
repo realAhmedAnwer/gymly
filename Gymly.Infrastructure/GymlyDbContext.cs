@@ -95,6 +95,22 @@ public class GymlyDbContext(DbContextOptions<GymlyDbContext> options, ICurrentUs
         return base.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task<T> ExecuteInTransactionAsync<T>(Func<CancellationToken, Task<T>> action, CancellationToken cancellationToken = default)
+    {
+        await using var transaction = await Database.BeginTransactionAsync(cancellationToken);
+        try
+        {
+            var result = await action(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+            return result;
+        }
+        catch
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
+    }
+
     private static void ConfigureGlobalSoftDeleteFilter<TEntity>(ModelBuilder modelBuilder) where TEntity : BaseEntity
     {
         modelBuilder.Entity<TEntity>().HasQueryFilter(e => !e.IsDeleted);

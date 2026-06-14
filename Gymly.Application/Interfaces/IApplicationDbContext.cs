@@ -20,4 +20,6 @@ public interface IApplicationDbContext
     DbSet<Booking> Bookings { get; }
     DbSet<AttendanceLog> AttendanceLogs { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+
+    Task<T> ExecuteInTransactionAsync<T>(Func<CancellationToken, Task<T>> action, CancellationToken cancellationToken = default);
 }
