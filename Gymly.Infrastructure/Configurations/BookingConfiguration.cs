@@ -23,7 +23,9 @@ public class BookingConfiguration : IEntityTypeConfiguration<Booking>
                .HasForeignKey(b => b.MemberId)
                .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasIndex(b => new { b.SessionId, b.MemberId }).IsUnique();
+        builder.HasIndex(b => new { b.SessionId, b.MemberId })
+            .IsUnique()
+            .HasFilter("[IsCancelled] = 0");
         builder.HasIndex(b => new { b.SessionId, b.IsCancelled });
     }
 }
