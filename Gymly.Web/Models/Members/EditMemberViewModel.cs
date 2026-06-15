@@ -13,7 +13,7 @@ public class EditMemberViewModel
     [EmailAddress(ErrorMessage = "Please enter a valid email address.")]
     public string Email { get; set; } = string.Empty;
 
-    [Phone(ErrorMessage = "Please enter a valid phone number.")]
+    [RegularExpression(@"^$|^0[0125]\d{9}$", ErrorMessage = "Phone must be a valid Egyptian number (e.g. 011XXXXXXXX).")]
     public string Phone { get; set; } = string.Empty;
 
     public bool IsActive { get; set; }

@@ -2,12 +2,18 @@ using Gymly.Infrastructure;
 using Gymly.Infrastructure.Seeders;
 using Gymly.Application;
 using Gymly.Application.Interfaces.Common;
+using Gymly.Web.Filters;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<FluentValidationExceptionFilter>();
+
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.AddService<FluentValidationExceptionFilter>();
+});
 
 var isDevelopment = builder.Environment.IsDevelopment();
 

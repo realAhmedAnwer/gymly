@@ -13,7 +13,7 @@ public class CreateTrainerViewModel
     public string Email { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Phone number is required.")]
-    [Phone(ErrorMessage = "Invalid phone number formatting.")]
+    [RegularExpression(@"^0[0125]\d{9}$", ErrorMessage = "Phone must be a valid Egyptian number (e.g. 011XXXXXXXX).")]
     public string Phone { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Specialization field is required.")]
