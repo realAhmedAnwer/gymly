@@ -1,4 +1,5 @@
 using FluentValidation;
+using Gymly.Application.Common.Exceptions;
 using MediatR;
 
 namespace Gymly.Application.Common.Behaviours;
@@ -26,10 +27,11 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
 
             if (failures.Count != 0)
             {
-                throw new ValidationException(failures);
+                var errorMessages = failures.Select(f => f.ErrorMessage).ToList();
+                throw new GymlyValidationException(string.Join("; ", errorMessages));
             }
         }
 
-        return await next();
+        return await next(cancellationToken);
     }
 }
