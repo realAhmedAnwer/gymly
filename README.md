@@ -23,8 +23,7 @@
 - [Getting Started](#-getting-started)
 - [Architecture & Design Patterns](#-architecture--design-patterns)
 - [Default Credentials](#-default-credentials)
-- [API & Endpoints](#-api--endpoints)
-- [Contributing](#-contributing)
+- [Endpoints](#-endpoints)
 - [License](#-license)
 
 ---
