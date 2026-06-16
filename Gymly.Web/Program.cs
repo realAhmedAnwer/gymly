@@ -45,7 +45,8 @@ using (var scope = app.Services.CreateScope())
     }
 
     var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
-    await DatabaseSeeder.SeedAsync(context, passwordHasher);
+    var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+    await DatabaseSeeder.SeedAsync(context, passwordHasher, configuration);
 }
 
 if (!app.Environment.IsDevelopment())

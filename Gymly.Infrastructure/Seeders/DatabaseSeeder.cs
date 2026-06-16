@@ -1,14 +1,13 @@
 using Gymly.Application.Interfaces.Common;
 using Gymly.Domain.Entities.Users;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Gymly.Infrastructure.Seeders;
 
 public static class DatabaseSeeder
 {
-    private const string SuperAdminPassword = "SuperAdmin@123";
-
-    public static async Task SeedAsync(GymlyDbContext context, IPasswordHasher passwordHasher)
+    public static async Task SeedAsync(GymlyDbContext context, IPasswordHasher passwordHasher, IConfiguration configuration)
     {
         var superAdminRole = await context.SystemRoles.FirstOrDefaultAsync(r => r.Name == "Super Admin");
         if (superAdminRole is null)
@@ -35,12 +34,17 @@ public static class DatabaseSeeder
 
         if (!await context.SystemUsers.AnyAsync())
         {
+            var username = configuration["SuperAdminSettings:Username"] ?? "superadmin";
+            var email = configuration["SuperAdminSettings:Email"] ?? "superadmin@gymly.com";
+            var fullName = configuration["SuperAdminSettings:FullName"] ?? "Super Administrator";
+            var password = configuration["SuperAdminSettings:Password"] ?? "SuperAdmin@123";
+
             var superAdminUser = new SystemUser
             {
-                Username = "superadmin",
-                Email = "superadmin@gymly.com",
-                FullName = "Super Administrator",
-                PasswordHash = passwordHasher.Hash(SuperAdminPassword),
+                Username = username,
+                Email = email,
+                FullName = fullName,
+                PasswordHash = passwordHasher.Hash(password),
                 IsActive = true,
                 SystemRoleId = superAdminRole.Id
             };
