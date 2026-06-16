@@ -5,7 +5,7 @@
     ViewData["Title"] = "Edit Plan";
 }
 
-<div class="max-w-2xl">
+<div class="max-w-2xl mx-auto">
     <div class="flex items-center justify-between mb-6">
         <h2 class="text-xl font-bold text-gray-900">Edit Plan</h2>
         <div class="flex items-center gap-2">
@@ -16,7 +16,10 @@
 
     <div class="gymly-card mb-6">
         <form asp-action="Edit" method="post">
-            <div asp-validation-summary="ModelOnly" class="gymly-alert gymly-alert-danger mb-4"></div>
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div asp-validation-summary="ModelOnly" class="gymly-alert gymly-alert-danger mb-4"></div>
+            }
             <input type="hidden" asp-for="Id" />
             <input type="hidden" asp-for="IsActive" />
 

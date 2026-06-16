@@ -4,7 +4,7 @@
     ViewData["Title"] = "Schedule Session";
 }
 
-<div class="max-w-xl">
+<div class="max-w-xl mx-auto">
     <div class="flex items-center justify-between mb-6">
         <h2 class="text-xl font-bold text-gray-900">Schedule Session</h2>
         <a asp-controller="Sessions" asp-action="Index" class="gymly-btn gymly-btn-secondary gymly-btn-sm">Back to List</a>
@@ -13,6 +13,11 @@
     <div class="gymly-card">
         <form asp-controller="Sessions" asp-action="Create" method="post">
             @Html.AntiForgeryToken()
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div asp-validation-summary="ModelOnly" class="gymly-alert gymly-alert-danger mb-4"></div>
+            }
 
             <div class="mb-4">
                 <label asp-for="ClassId" class="gymly-label">Class</label>

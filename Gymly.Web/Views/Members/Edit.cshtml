@@ -5,7 +5,7 @@
     var token = ViewBag.AttendanceCardToken as Guid?;
 }
 
-<div class="max-w-xl">
+<div class="max-w-xl mx-auto">
     <div class="flex items-center justify-between mb-6">
         <h2 class="text-xl font-bold text-gray-900">Edit Member</h2>
         <a asp-action="Index" class="gymly-btn gymly-btn-secondary gymly-btn-sm">Back to List</a>
@@ -13,7 +13,10 @@
 
     <div class="gymly-card">
         <form asp-action="Edit" method="post">
-            <div asp-validation-summary="ModelOnly" class="gymly-alert gymly-alert-danger mb-4"></div>
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div asp-validation-summary="ModelOnly" class="gymly-alert gymly-alert-danger mb-4"></div>
+            }
             <input type="hidden" asp-for="Id" />
             <input type="hidden" asp-for="IsActive" />
             <input type="hidden" asp-for="RegistrationDate" />

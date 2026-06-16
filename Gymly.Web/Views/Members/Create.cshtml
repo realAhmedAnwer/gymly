@@ -4,7 +4,7 @@
     ViewData["Title"] = "Register Member";
 }
 
-<div class="max-w-xl">
+<div class="max-w-xl mx-auto">
     <div class="flex items-center justify-between mb-6">
         <h2 class="text-xl font-bold text-gray-900">Register New Member</h2>
         <a asp-action="Index" class="gymly-btn gymly-btn-secondary gymly-btn-sm">Back to List</a>
@@ -12,7 +12,10 @@
 
     <div class="gymly-card">
         <form asp-action="Create" method="post">
-            <div asp-validation-summary="ModelOnly" class="gymly-alert gymly-alert-danger mb-4"></div>
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div asp-validation-summary="ModelOnly" class="gymly-alert gymly-alert-danger mb-4"></div>
+            }
 
             <div class="mb-4">
                 <label asp-for="Name" class="gymly-label">Full Name</label>
