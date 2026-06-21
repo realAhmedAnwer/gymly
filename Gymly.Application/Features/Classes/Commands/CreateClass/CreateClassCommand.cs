@@ -1,4 +1,6 @@
-﻿using Gymly.Application.Interfaces;
+﻿using Gymly.Application.Common.Caching;
+using Gymly.Application.Interfaces;
+using Gymly.Application.Interfaces.Common;
 using Gymly.Domain.Entities.Schedules;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +12,7 @@ public record CreateClassCommand(
     string Description,
     int MaxCapacity) : IRequest<int>;
 
-public class CreateClassCommandHandler(IApplicationDbContext context) : IRequestHandler<CreateClassCommand, int>
+public class CreateClassCommandHandler(IApplicationDbContext context, ICacheService cacheService) : IRequestHandler<CreateClassCommand, int>
 {
     public async Task<int> Handle(CreateClassCommand request, CancellationToken cancellationToken)
     {
@@ -41,6 +43,8 @@ public class CreateClassCommandHandler(IApplicationDbContext context) : IRequest
         {
             throw new InvalidOperationException("A class with this name already exists.");
         }
+
+        await cacheService.RemoveByPrefixAsync(CacheKeys.AllClasses, cancellationToken);
 
         return fitnessClass.Id;
     }

@@ -1,4 +1,6 @@
+using Gymly.Application.Common.Caching;
 using Gymly.Application.Interfaces;
+using Gymly.Application.Interfaces.Common;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,7 +13,7 @@ public record UpdatePlanCommand(
     decimal Price,
     int DurationInDays) : IRequest<bool>;
 
-public class UpdatePlanCommandHandler(IApplicationDbContext context) : IRequestHandler<UpdatePlanCommand, bool>
+public class UpdatePlanCommandHandler(IApplicationDbContext context, ICacheService cacheService) : IRequestHandler<UpdatePlanCommand, bool>
 {
     public async Task<bool> Handle(UpdatePlanCommand request, CancellationToken cancellationToken)
     {
@@ -39,6 +41,8 @@ public class UpdatePlanCommandHandler(IApplicationDbContext context) : IRequestH
         {
             throw new InvalidOperationException("Another plan with this title already exists.");
         }
+
+        await cacheService.RemoveByPrefixAsync(CacheKeys.AllPlans, cancellationToken);
 
         return true;
     }

@@ -24,6 +24,13 @@ public static class DependencyInjection
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IQrCodeService, QrCodeService>();
 
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = configuration.GetConnectionString("Redis") ?? "localhost:6379";
+        });
+
+        services.AddSingleton<ICacheService, RedisCacheService>();
+
         return services;
     }
 }

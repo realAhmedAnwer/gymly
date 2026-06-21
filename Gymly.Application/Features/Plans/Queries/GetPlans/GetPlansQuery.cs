@@ -1,4 +1,6 @@
+using Gymly.Application.Common.Caching;
 using Gymly.Application.Interfaces;
+using Gymly.Application.Interfaces.Common;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,11 +8,19 @@ namespace Gymly.Application.Features.Plans.Queries.GetPlans;
 
 public record GetPlansQuery(bool? ShowInactive = null, string? SortBy = null) : IRequest<List<PlanDto>>;
 
-public class GetPlansQueryHandler(IApplicationDbContext context)
+public class GetPlansQueryHandler(IApplicationDbContext context, ICacheService cacheService)
     : IRequestHandler<GetPlansQuery, List<PlanDto>>
 {
+    private static readonly TimeSpan CacheDuration = TimeSpan.FromMinutes(5);
+
     public async Task<List<PlanDto>> Handle(GetPlansQuery request, CancellationToken cancellationToken)
     {
+        var cacheKey = CacheKeys.PlansByFilter(request.ShowInactive, request.SortBy);
+
+        var cachedResult = await cacheService.GetAsync<List<PlanDto>>(cacheKey, cancellationToken);
+        if (cachedResult is not null)
+            return cachedResult;
+
         var plansQuery = context.Plans.AsNoTracking().AsQueryable();
 
         if (request.ShowInactive != true)
@@ -43,7 +53,7 @@ public class GetPlansQueryHandler(IApplicationDbContext context)
                 g => g.Select(r => new PlanAccessRuleSummaryDto(r.Id, r.RuleType.ToString(), r.RuleValue)).ToList()
             );
 
-        return plans.Select(p => new PlanDto(
+        var result = plans.Select(p => new PlanDto(
             p.Id,
             p.Title,
             p.Description,
@@ -52,5 +62,8 @@ public class GetPlansQueryHandler(IApplicationDbContext context)
             p.IsActive,
             rulesByPlan.TryGetValue(p.Id, out var r) ? r : []
         )).ToList();
+
+        await cacheService.SetAsync(cacheKey, result, CacheDuration, cancellationToken);
+        return result;
     }
 }

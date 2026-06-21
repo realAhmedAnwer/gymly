@@ -1,11 +1,13 @@
-﻿using Gymly.Application.Interfaces;
+﻿using Gymly.Application.Common.Caching;
+using Gymly.Application.Interfaces;
+using Gymly.Application.Interfaces.Common;
 using MediatR;
 
 namespace Gymly.Application.Features.Classes.Commands.DeleteClass;
 
 public record DeleteClassCommand(int ClassId) : IRequest<bool>;
 
-public class DeleteClassCommandHandler(IApplicationDbContext context) : IRequestHandler<DeleteClassCommand, bool>
+public class DeleteClassCommandHandler(IApplicationDbContext context, ICacheService cacheService) : IRequestHandler<DeleteClassCommand, bool>
 {
     public async Task<bool> Handle(DeleteClassCommand request, CancellationToken cancellationToken)
     {
@@ -14,6 +16,8 @@ public class DeleteClassCommandHandler(IApplicationDbContext context) : IRequest
 
         context.Classes.Remove(fitnessClass);
         await context.SaveChangesAsync(cancellationToken);
+
+        await cacheService.RemoveByPrefixAsync(CacheKeys.AllClasses, cancellationToken);
 
         return true;
     }

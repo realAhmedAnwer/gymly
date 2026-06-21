@@ -1,4 +1,6 @@
-﻿using Gymly.Application.Interfaces;
+﻿using Gymly.Application.Common.Caching;
+using Gymly.Application.Interfaces;
+using Gymly.Application.Interfaces.Common;
 using Gymly.Domain.Entities.Users;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +14,8 @@ public record CreateTrainerCommand(
     string Specialization) : IRequest<int>;
 
 public class CreateTrainerCommandHandler(
-    IApplicationDbContext context) : IRequestHandler<CreateTrainerCommand, int>
+    IApplicationDbContext context,
+    ICacheService cacheService) : IRequestHandler<CreateTrainerCommand, int>
 {
     public async Task<int> Handle(CreateTrainerCommand request, CancellationToken cancellationToken)
     {
@@ -45,6 +48,8 @@ public class CreateTrainerCommandHandler(
         {
             throw new InvalidOperationException("A trainer with this email address already exists.");
         }
+
+        await cacheService.RemoveAsync(CacheKeys.AllTrainers, cancellationToken);
 
         return trainer.Id;
     }

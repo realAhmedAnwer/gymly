@@ -1,4 +1,6 @@
+using Gymly.Application.Common.Caching;
 using Gymly.Application.Interfaces;
+using Gymly.Application.Interfaces.Common;
 using Gymly.Domain.Entities.Memberships;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +13,7 @@ public record CreatePlanCommand(
     decimal Price,
     int DurationInDays) : IRequest<int>;
 
-public class CreatePlanCommandHandler(IApplicationDbContext context) : IRequestHandler<CreatePlanCommand, int>
+public class CreatePlanCommandHandler(IApplicationDbContext context, ICacheService cacheService) : IRequestHandler<CreatePlanCommand, int>
 {
     public async Task<int> Handle(CreatePlanCommand request, CancellationToken cancellationToken)
     {
@@ -32,6 +34,8 @@ public class CreatePlanCommandHandler(IApplicationDbContext context) : IRequestH
 
         context.Plans.Add(plan);
         await context.SaveChangesAsync(cancellationToken);
+
+        await cacheService.RemoveByPrefixAsync(CacheKeys.AllPlans, cancellationToken);
 
         return plan.Id;
     }

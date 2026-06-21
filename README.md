@@ -40,6 +40,7 @@
 - **Role-Based Access Control** — Three-tier role hierarchy (Super Admin, Admin, Receptionist) with cookie-based authentication.
 - **Dashboard** — Real-time overview with 8 stat cards, upcoming sessions, and quick-action links.
 - **Responsive UI** — Dark sidebar navigation, Tailwind CSS design system, mobile-friendly layout.
+- **Redis Distributed Caching** — Lookup data (trainers, classes, roles, plans) cached in Redis with automatic invalidation on mutations.
 
 ---
 
@@ -55,6 +56,7 @@
 | **Auth**         | ASP.NET Core Cookie Authentication, BCrypt.Net-Next 4.2.0                   |
 | **Validation**   | FluentValidation (server-side pipeline), Data Annotations (client-side)     |
 | **Containerization** | Docker, Docker Compose                                                  |
+| **Caching**          | Redis 8 (Microsoft.Extensions.Caching.StackExchangeRedis 10.0.8)       |
 
 ---
 
@@ -145,7 +147,8 @@ docker compose up --build
 This command:
 - Builds the `Gymly.Web` Docker image using the multi-stage Dockerfile (SDK restore → build → publish → runtime image).
 - Pulls the `mcr.microsoft.com/mssql/server:2022-latest` image for the database.
-- Starts both containers on a shared `gymly-network` bridge.
+- Pulls the `redis:8-alpine` image for distributed caching.
+- Starts all containers on a shared `gymly-network` bridge.
 - Runs EF Core migrations automatically on first startup (Development mode).
 - Seeds the database with default roles and the Super Admin user.
 
@@ -161,6 +164,7 @@ Expected output:
 | --------------- | --------------- | ------------- | ---------------------------- |
 | gymly-mvc-web   | gymly-web-app   | Up (healthy)  | 0.0.0.0:8080→8080/tcp        |
 | gymly-sql-db    | mcr.microsoft.com/mssql/server:2022-latest | Up | 0.0.0.0:1433→1433/tcp |
+| gymly-redis     | redis:8-alpine  | Up (healthy)  | 0.0.0.0:6379→6379/tcp        |
 
 Open your browser and navigate to:
 
