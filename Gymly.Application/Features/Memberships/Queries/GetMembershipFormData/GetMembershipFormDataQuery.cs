@@ -12,6 +12,7 @@ public class GetMembershipFormDataQueryHandler(IApplicationDbContext context)
     public async Task<MembershipFormDataDto?> Handle(GetMembershipFormDataQuery request, CancellationToken cancellationToken)
     {
         var member = await context.Members
+            .AsNoTracking()
             .Where(m => m.Id == request.MemberId && m.IsActive)
             .Select(m => new { m.Id, m.Name })
             .FirstOrDefaultAsync(cancellationToken);
@@ -19,6 +20,7 @@ public class GetMembershipFormDataQueryHandler(IApplicationDbContext context)
         if (member == null) return null;
 
         var plans = await context.Plans
+            .AsNoTracking()
             .Where(p => p.IsActive)
             .OrderBy(p => p.Title)
             .Select(p => new PlanOptionDto

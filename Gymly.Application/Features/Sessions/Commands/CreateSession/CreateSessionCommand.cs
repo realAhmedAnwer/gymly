@@ -20,15 +20,17 @@ public class CreateSessionCommandHandler(IApplicationDbContext context) : IReque
             throw new ArgumentException("Session execution end time must fall after the starting mark.");
         }
 
-        var fitnessClass = await context.Classes
-            .FirstOrDefaultAsync(c => c.Id == request.ClassId, cancellationToken);
+        var maxCapacity = await context.Classes
+            .Where(c => c.Id == request.ClassId)
+            .Select(c => c.MaxCapacity)
+            .FirstOrDefaultAsync(cancellationToken);
 
-        if (fitnessClass == null)
+        if (maxCapacity == 0)
         {
             throw new ArgumentException("The specified fitness class does not exist.");
         }
 
-        if (fitnessClass.MaxCapacity <= 0)
+        if (maxCapacity <= 0)
         {
             throw new ArgumentException("Cannot schedule a session for a class with zero or negative capacity.");
         }

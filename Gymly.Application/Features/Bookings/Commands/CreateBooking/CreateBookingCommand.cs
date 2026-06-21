@@ -11,32 +11,36 @@ public class CreateBookingCommandHandler(IApplicationDbContext context)
 {
     public async Task<int> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
     {
-        var session = await context.Sessions
-            .FirstOrDefaultAsync(s => s.Id == request.SessionId, cancellationToken);
+        var sessionData = await context.Sessions
+            .Where(s => s.Id == request.SessionId)
+            .Select(s => new { s.EndTime, s.ClassId })
+            .FirstOrDefaultAsync(cancellationToken);
 
-        if (session == null)
+        if (sessionData == null)
         {
             throw new InvalidOperationException("Session not found.");
         }
 
-        var member = await context.Members
-            .FirstOrDefaultAsync(m => m.Id == request.MemberId, cancellationToken);
-
-        if (member == null || !member.IsActive)
-        {
-            throw new InvalidOperationException("Member not found or inactive.");
-        }
-
-        if (session.EndTime <= DateTime.UtcNow)
+        if (sessionData.EndTime <= DateTime.UtcNow)
         {
             throw new InvalidOperationException("Cannot book a session that has already ended.");
+        }
+
+        var memberIsActive = await context.Members
+            .Where(m => m.Id == request.MemberId)
+            .Select(m => m.IsActive)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (!memberIsActive)
+        {
+            throw new InvalidOperationException("Member not found or inactive.");
         }
 
         var activeBookingsCount = await context.Bookings
             .CountAsync(b => b.SessionId == request.SessionId && !b.IsCancelled, cancellationToken);
 
         var maxCapacity = await context.Classes
-            .Where(c => c.Id == session.ClassId)
+            .Where(c => c.Id == sessionData.ClassId)
             .Select(c => c.MaxCapacity)
             .FirstOrDefaultAsync(cancellationToken);
 
